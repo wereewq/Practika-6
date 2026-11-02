@@ -59,7 +59,10 @@ class ApiReaderRepository implements ReaderRepository {
 
   @override
   Future<Reader> update(Reader reader) => guard(() async {
-    final response = await _dio.put('/readers/${reader.id}', data: reader.toJson());
+    final response = await _dio.put(
+      '/readers/${reader.id}',
+      data: reader.toJson(),
+    );
     return Reader.fromJson(response.data as Map<String, dynamic>);
   });
 
@@ -67,16 +70,19 @@ class ApiReaderRepository implements ReaderRepository {
   Future<void> softDelete(int id) => guard(() => _dio.delete('/readers/$id'));
 
   @override
-  Future<void> hardDelete(int id) => guard(
-        () => _dio.delete('/readers/$id', queryParameters: {'hard': true}),
-      );
+  Future<void> hardDelete(int id) =>
+      guard(() => _dio.delete('/readers/$id', queryParameters: {'hard': true}));
 
   @override
-  Future<void> restore(int id) => guard(() => _dio.post('/readers/$id/restore'));
+  Future<void> restore(int id) =>
+      guard(() => _dio.post('/readers/$id/restore'));
 
   @override
   Future<int> deleteMany(List<int> ids) => guard(() async {
-    final response = await _dio.post('/readers/bulk-delete', data: {'ids': ids});
+    final response = await _dio.post(
+      '/readers/bulk-delete',
+      data: {'ids': ids},
+    );
     return (response.data as Map<String, dynamic>)['deleted'] as int? ?? 0;
   });
 }

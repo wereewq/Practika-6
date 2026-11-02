@@ -49,7 +49,10 @@ class ApiAuthorRepository implements AuthorRepository {
   @override
   Future<List<Author>> findAll() => guard(() async {
     if (_cachedAuthors != null) return _cachedAuthors!;
-    final response = await _dio.get('/authors', queryParameters: {'size': 1000});
+    final response = await _dio.get(
+      '/authors',
+      queryParameters: {'size': 1000},
+    );
     final data = response.data as Map<String, dynamic>;
     final rawList = data['items'] as List? ?? const [];
     _cachedAuthors = [
@@ -76,7 +79,10 @@ class ApiAuthorRepository implements AuthorRepository {
   @override
   Future<Author> update(Author author) => guard(() async {
     _cachedAuthors = null;
-    final response = await _dio.put('/authors/${author.id}', data: author.toJson());
+    final response = await _dio.put(
+      '/authors/${author.id}',
+      data: author.toJson(),
+    );
     return Author.fromJson(response.data as Map<String, dynamic>);
   });
 
@@ -101,7 +107,10 @@ class ApiAuthorRepository implements AuthorRepository {
   @override
   Future<int> deleteMany(List<int> ids) => guard(() async {
     _cachedAuthors = null;
-    final response = await _dio.post('/authors/bulk-delete', data: {'ids': ids});
+    final response = await _dio.post(
+      '/authors/bulk-delete',
+      data: {'ids': ids},
+    );
     return (response.data as Map<String, dynamic>)['deleted'] as int? ?? 0;
   });
 }

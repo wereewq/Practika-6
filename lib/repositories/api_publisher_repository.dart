@@ -48,7 +48,10 @@ class ApiPublisherRepository implements PublisherRepository {
   @override
   Future<List<Publisher>> findAll() => guard(() async {
     if (_cachedPublishers != null) return _cachedPublishers!;
-    final response = await _dio.get('/publishers', queryParameters: {'size': 1000});
+    final response = await _dio.get(
+      '/publishers',
+      queryParameters: {'size': 1000},
+    );
     final data = response.data as Map<String, dynamic>;
     final rawList = data['items'] as List? ?? const [];
     _cachedPublishers = [
@@ -75,7 +78,10 @@ class ApiPublisherRepository implements PublisherRepository {
   @override
   Future<Publisher> update(Publisher publisher) => guard(() async {
     _cachedPublishers = null;
-    final response = await _dio.put('/publishers/${publisher.id}', data: publisher.toJson());
+    final response = await _dio.put(
+      '/publishers/${publisher.id}',
+      data: publisher.toJson(),
+    );
     return Publisher.fromJson(response.data as Map<String, dynamic>);
   });
 
@@ -100,7 +106,10 @@ class ApiPublisherRepository implements PublisherRepository {
   @override
   Future<int> deleteMany(List<int> ids) => guard(() async {
     _cachedPublishers = null;
-    final response = await _dio.post('/publishers/bulk-delete', data: {'ids': ids});
+    final response = await _dio.post(
+      '/publishers/bulk-delete',
+      data: {'ids': ids},
+    );
     return (response.data as Map<String, dynamic>)['deleted'] as int? ?? 0;
   });
 }

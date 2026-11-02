@@ -60,8 +60,14 @@ class _GenreFormScreenState extends State<GenreFormScreen> {
         title: const Text('Несохранённые изменения'),
         content: const Text('Данные жанра не сохранены. Выйти?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Остаться')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Выйти')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Остаться'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Выйти'),
+          ),
         ],
       ),
     );
@@ -93,9 +99,9 @@ class _GenreFormScreenState extends State<GenreFormScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка сохранения: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Ошибка сохранения: $e')));
     }
   }
 
@@ -151,7 +157,10 @@ class _GenreFormScreenState extends State<GenreFormScreen> {
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (_) => _markDirty(),
-                      validator: V.combine([V.required(), V.length(min: 2, max: 100)]),
+                      validator: V.combine([
+                        V.required(),
+                        V.length(min: 2, max: 100),
+                      ]),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -162,7 +171,10 @@ class _GenreFormScreenState extends State<GenreFormScreen> {
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (_) => _markDirty(),
-                      validator: V.combine([V.required(), V.length(min: 5, max: 500)]),
+                      validator: V.combine([
+                        V.required(),
+                        V.length(min: 5, max: 500),
+                      ]),
                     ),
                     const SizedBox(height: 24),
                     FilledButton.icon(
@@ -170,10 +182,17 @@ class _GenreFormScreenState extends State<GenreFormScreen> {
                           ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
                           : const Icon(Icons.save),
-                      label: Text(widget.isEditing ? 'Сохранить изменения' : 'Создать жанр'),
+                      label: Text(
+                        widget.isEditing
+                            ? 'Сохранить изменения'
+                            : 'Создать жанр',
+                      ),
                       onPressed: _isSaving ? null : _submit,
                     ),
                   ],

@@ -25,26 +25,36 @@ class PersistentBookRepository implements BookRepository {
     } else {
       try {
         final list = jsonDecode(raw) as List;
-        _books = list.map((e) => Book.fromJson(e as Map<String, dynamic>)).toList();
+        _books = list
+            .map((e) => Book.fromJson(e as Map<String, dynamic>))
+            .toList();
       } catch (_) {
         _books = [...seedBooks];
         _persist();
       }
     }
-    _nextId = (_books.map((b) => b.id).fold(0, (max, id) => id > max ? id : max)) + 1;
+    _nextId =
+        (_books.map((b) => b.id).fold(0, (max, id) => id > max ? id : max)) + 1;
   }
 
   Future<void> _persist() async {
-    await _prefs.setString(_key, jsonEncode(_books.map((b) => b.toJson()).toList()));
+    await _prefs.setString(
+      _key,
+      jsonEncode(_books.map((b) => b.toJson()).toList()),
+    );
   }
 
   void _checkUniqueIsbn(String isbn, {int? excludeId}) {
     final normalized = isbn.replaceAll(RegExp(r'[-\s]'), '').toLowerCase();
-    final duplicate = _books.any((b) =>
-        b.id != excludeId &&
-        b.isbn.replaceAll(RegExp(r'[-\s]'), '').toLowerCase() == normalized);
+    final duplicate = _books.any(
+      (b) =>
+          b.id != excludeId &&
+          b.isbn.replaceAll(RegExp(r'[-\s]'), '').toLowerCase() == normalized,
+    );
     if (duplicate) {
-      throw const ValidationException('Ошибка валидации', {'isbn': 'Книга с таким ISBN уже существует'});
+      throw const ValidationException('Ошибка валидации', {
+        'isbn': 'Книга с таким ISBN уже существует',
+      });
     }
   }
 
@@ -61,9 +71,11 @@ class PersistentBookRepository implements BookRepository {
     if (q.search.trim().isNotEmpty) {
       final needle = q.search.trim().toLowerCase();
       rows = rows
-          .where((b) =>
-              b.title.toLowerCase().contains(needle) ||
-              b.isbn.toLowerCase().contains(needle))
+          .where(
+            (b) =>
+                b.title.toLowerCase().contains(needle) ||
+                b.isbn.toLowerCase().contains(needle),
+          )
           .toList();
     }
     if (q.genreId != null) {

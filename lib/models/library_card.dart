@@ -26,16 +26,19 @@ class LibraryCard {
   }
 
   Map<String, dynamic> toJson() => {
-        'cardNumber': cardNumber,
-        'issuedAt': issuedAt.toIso8601String(),
-        'expiresAt': expiresAt.toIso8601String(),
-        'isActive': isActive,
-      };
+    'cardNumber': cardNumber,
+    'issuedAt': issuedAt.toIso8601String(),
+    'expiresAt': expiresAt.toIso8601String(),
+    'isActive': isActive,
+  };
 
   factory LibraryCard.fromJson(Map<String, dynamic> json) => LibraryCard(
-        cardNumber: json['cardNumber'] as String? ?? '',
-        issuedAt: DateTime.tryParse(json['issuedAt'] as String? ?? '') ?? DateTime.now(),
-        expiresAt: DateTime.tryParse(json['expiresAt'] as String? ?? '') ?? DateTime.now().add(const Duration(days: 365)),
-        isActive: json['isActive'] as bool? ?? true,
-      );
+    cardNumber: json['cardNumber'] as String? ?? '',
+    issuedAt:
+        DateTime.tryParse(json['issuedAt'] as String? ?? '') ?? DateTime.now(),
+    expiresAt:
+        DateTime.tryParse(json['expiresAt'] as String? ?? '') ??
+        DateTime.now().add(const Duration(days: 365)),
+    isActive: json['isActive'] as bool? ?? true,
+  );
 }

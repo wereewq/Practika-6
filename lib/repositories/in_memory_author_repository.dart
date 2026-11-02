@@ -22,10 +22,12 @@ class InMemoryAuthorRepository implements AuthorRepository {
     if (q.search.trim().isNotEmpty) {
       final needle = q.search.trim().toLowerCase();
       rows = rows
-          .where((a) =>
-              a.lastName.toLowerCase().contains(needle) ||
-              a.firstName.toLowerCase().contains(needle) ||
-              a.country.toLowerCase().contains(needle))
+          .where(
+            (a) =>
+                a.lastName.toLowerCase().contains(needle) ||
+                a.firstName.toLowerCase().contains(needle) ||
+                a.country.toLowerCase().contains(needle),
+          )
           .toList();
     }
 

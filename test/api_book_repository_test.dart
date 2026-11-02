@@ -68,7 +68,7 @@ void main() {
               'copiesTotal': 10,
               'copiesAvailable': 8,
               'deletedAt': null,
-            }
+            },
           ],
           'page': 1,
           'size': 10,
@@ -93,47 +93,50 @@ void main() {
     });
 
     // 2. Разбор ошибки 422 Unprocessable Entity
-    test('create() при статусе 422 выбрасывает ValidationException с полями ошибок', () async {
-      mockAdapter.handler = (options) {
-        final errorPayload = {
-          'message': 'Ошибка валидации',
-          'errors': {
-            'isbn': 'Книга с таким ISBN уже существует',
-            'year': 'Год не может быть в будущем',
-          },
+    test(
+      'create() при статусе 422 выбрасывает ValidationException с полями ошибок',
+      () async {
+        mockAdapter.handler = (options) {
+          final errorPayload = {
+            'message': 'Ошибка валидации',
+            'errors': {
+              'isbn': 'Книга с таким ISBN уже существует',
+              'year': 'Год не может быть в будущем',
+            },
+          };
+
+          return ResponseBody.fromString(
+            jsonEncode(errorPayload),
+            422,
+            headers: {
+              Headers.contentTypeHeader: [Headers.jsonContentType],
+            },
+          );
         };
 
-        return ResponseBody.fromString(
-          jsonEncode(errorPayload),
-          422,
-          headers: {
-            Headers.contentTypeHeader: [Headers.jsonContentType],
-          },
+        const newBook = Book(
+          id: 0,
+          title: 'Дубликат',
+          isbn: '978-5-17-080115-2',
+          year: 2099,
+          pages: 100,
+          publisherId: 1,
+          authorIds: [1],
+          genreIds: [1],
+          copiesTotal: 1,
+          copiesAvailable: 1,
         );
-      };
 
-      const newBook = Book(
-        id: 0,
-        title: 'Дубликат',
-        isbn: '978-5-17-080115-2',
-        year: 2099,
-        pages: 100,
-        publisherId: 1,
-        authorIds: [1],
-        genreIds: [1],
-        copiesTotal: 1,
-        copiesAvailable: 1,
-      );
-
-      try {
-        await repository.create(newBook);
-        fail('Ожидалось исключение ValidationException');
-      } on ValidationException catch (e) {
-        expect(e.message, 'Ошибка валидации');
-        expect(e.errors['isbn'], 'Книга с таким ISBN уже существует');
-        expect(e.errors['year'], 'Год не может быть в будущем');
-      }
-    });
+        try {
+          await repository.create(newBook);
+          fail('Ожидалось исключение ValidationException');
+        } on ValidationException catch (e) {
+          expect(e.message, 'Ошибка валидации');
+          expect(e.errors['isbn'], 'Книга с таким ISBN уже существует');
+          expect(e.errors['year'], 'Год не может быть в будущем');
+        }
+      },
+    );
 
     // 3. Обработка недоступности сервера (Connection Error / CORS)
     test('find() при сбое подключения выбрасывает NetworkException', () async {
@@ -152,66 +155,70 @@ void main() {
     });
 
     // 4. Обработка конфликта 409 Conflict
-    test('softDelete() при статусе 409 выбрасывает ConflictException', () async {
-      mockAdapter.handler = (options) {
-        final payload = {'message': 'Книга выдана читателям и не может быть удалена'};
-        return ResponseBody.fromString(
-          jsonEncode(payload),
-          409,
-          headers: {
-            Headers.contentTypeHeader: [Headers.jsonContentType],
-          },
-        );
-      };
-
-      expect(
-        () => repository.softDelete(1),
-        throwsA(isA<ConflictException>()),
-      );
-    });
-
-    // 5. Успешное создание записи через POST
-    test('create() отправляет данные на сервер и возвращает созданную книгу', () async {
-      mockAdapter.handler = (options) {
-        expect(options.method, 'POST');
-        expect(options.path, '/books');
-
-        final body = options.data as Map<String, dynamic>;
-        expect(body['title'], 'Новая книга');
-
-        final responsePayload = {
-          ...body,
-          'id': 42,
-          'deletedAt': null,
+    test(
+      'softDelete() при статусе 409 выбрасывает ConflictException',
+      () async {
+        mockAdapter.handler = (options) {
+          final payload = {
+            'message': 'Книга выдана читателям и не может быть удалена',
+          };
+          return ResponseBody.fromString(
+            jsonEncode(payload),
+            409,
+            headers: {
+              Headers.contentTypeHeader: [Headers.jsonContentType],
+            },
+          );
         };
 
-        return ResponseBody.fromString(
-          jsonEncode(responsePayload),
-          201,
-          headers: {
-            Headers.contentTypeHeader: [Headers.jsonContentType],
-          },
+        expect(
+          () => repository.softDelete(1),
+          throwsA(isA<ConflictException>()),
         );
-      };
+      },
+    );
 
-      const bookToCreate = Book(
-        id: 0,
-        title: 'Новая книга',
-        isbn: '978-5-389-00000-0',
-        year: 2026,
-        pages: 250,
-        publisherId: 1,
-        authorIds: [1],
-        genreIds: [1],
-        copiesTotal: 5,
-        copiesAvailable: 5,
-      );
+    // 5. Успешное создание записи через POST
+    test(
+      'create() отправляет данные на сервер и возвращает созданную книгу',
+      () async {
+        mockAdapter.handler = (options) {
+          expect(options.method, 'POST');
+          expect(options.path, '/books');
 
-      final created = await repository.create(bookToCreate);
+          final body = options.data as Map<String, dynamic>;
+          expect(body['title'], 'Новая книга');
 
-      expect(created.id, 42);
-      expect(created.title, 'Новая книга');
-      expect(created.year, 2026);
-    });
+          final responsePayload = {...body, 'id': 42, 'deletedAt': null};
+
+          return ResponseBody.fromString(
+            jsonEncode(responsePayload),
+            201,
+            headers: {
+              Headers.contentTypeHeader: [Headers.jsonContentType],
+            },
+          );
+        };
+
+        const bookToCreate = Book(
+          id: 0,
+          title: 'Новая книга',
+          isbn: '978-5-389-00000-0',
+          year: 2026,
+          pages: 250,
+          publisherId: 1,
+          authorIds: [1],
+          genreIds: [1],
+          copiesTotal: 5,
+          copiesAvailable: 5,
+        );
+
+        final created = await repository.create(bookToCreate);
+
+        expect(created.id, 42);
+        expect(created.title, 'Новая книга');
+        expect(created.year, 2026);
+      },
+    );
   });
 }

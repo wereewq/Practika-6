@@ -41,19 +41,33 @@ class _BookListScreenState extends State<BookListScreen> {
 
   void _pushQuery(BookQuery nextQuery) {
     final params = bookQueryToParams(nextQuery);
-    final uri = Uri(path: '/books', queryParameters: params.isEmpty ? null : params);
+    final uri = Uri(
+      path: '/books',
+      queryParameters: params.isEmpty ? null : params,
+    );
     context.go(uri.toString());
   }
 
-  Future<void> _confirmDeleteSelected(BuildContext context, BookListNotifier notifier) async {
+  Future<void> _confirmDeleteSelected(
+    BuildContext context,
+    BookListNotifier notifier,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Удаление записей'),
-        content: Text('Удалить выбранные книги (${notifier.selected.length} шт.)?'),
+        content: Text(
+          'Удалить выбранные книги (${notifier.selected.length} шт.)?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Отмена')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Удалить')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Отмена'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Удалить'),
+          ),
         ],
       ),
     );
@@ -62,16 +76,27 @@ class _BookListScreenState extends State<BookListScreen> {
     }
   }
 
-  Future<void> _confirmHardDelete(BuildContext context, BookListNotifier notifier, Book book) async {
+  Future<void> _confirmHardDelete(
+    BuildContext context,
+    BookListNotifier notifier,
+    Book book,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Физическое удаление'),
-        content: Text('Книга «${book.title}» будет стёрта из памяти навсегда. Продолжить?'),
+        content: Text(
+          'Книга «${book.title}» будет стёрта из памяти навсегда. Продолжить?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Отмена')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Отмена'),
+          ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Стереть'),
           ),
@@ -150,23 +175,38 @@ class _BookListScreenState extends State<BookListScreen> {
                     items: const [
                       DropdownMenuItem(
                         value: null,
-                        child: Text('Все жанры', overflow: TextOverflow.ellipsis),
+                        child: Text(
+                          'Все жанры',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 1,
-                        child: Text('Роман / Проза', overflow: TextOverflow.ellipsis),
+                        child: Text(
+                          'Роман / Проза',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 2,
-                        child: Text('Детектив', overflow: TextOverflow.ellipsis),
+                        child: Text(
+                          'Детектив',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 3,
-                        child: Text('Антиутопия / Фантастика', overflow: TextOverflow.ellipsis),
+                        child: Text(
+                          'Антиутопия / Фантастика',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 4,
-                        child: Text('Философская притча', overflow: TextOverflow.ellipsis),
+                        child: Text(
+                          'Философская притча',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                     onChanged: (val) => _pushQuery(q.copyWith(genreId: val)),
@@ -185,7 +225,10 @@ class _BookListScreenState extends State<BookListScreen> {
                     items: const [
                       DropdownMenuItem(
                         value: null,
-                        child: Text('Все издательства', overflow: TextOverflow.ellipsis),
+                        child: Text(
+                          'Все издательства',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 1,
@@ -200,7 +243,8 @@ class _BookListScreenState extends State<BookListScreen> {
                         child: Text('Эксмо', overflow: TextOverflow.ellipsis),
                       ),
                     ],
-                    onChanged: (val) => _pushQuery(q.copyWith(publisherId: val)),
+                    onChanged: (val) =>
+                        _pushQuery(q.copyWith(publisherId: val)),
                   ),
                 ),
                 SizedBox(
@@ -213,7 +257,8 @@ class _BookListScreenState extends State<BookListScreen> {
                       isDense: true,
                       border: OutlineInputBorder(),
                     ),
-                    onFieldSubmitted: (v) => _pushQuery(q.copyWith(yearFrom: int.tryParse(v))),
+                    onFieldSubmitted: (v) =>
+                        _pushQuery(q.copyWith(yearFrom: int.tryParse(v))),
                   ),
                 ),
                 SizedBox(
@@ -226,13 +271,15 @@ class _BookListScreenState extends State<BookListScreen> {
                       isDense: true,
                       border: OutlineInputBorder(),
                     ),
-                    onFieldSubmitted: (v) => _pushQuery(q.copyWith(yearTo: int.tryParse(v))),
+                    onFieldSubmitted: (v) =>
+                        _pushQuery(q.copyWith(yearTo: int.tryParse(v))),
                   ),
                 ),
                 FilterChip(
                   label: const Text('Включая удалённые'),
                   selected: q.includeDeleted,
-                  onSelected: (val) => _pushQuery(q.copyWith(includeDeleted: val)),
+                  onSelected: (val) =>
+                      _pushQuery(q.copyWith(includeDeleted: val)),
                 ),
                 if (q.search.isNotEmpty ||
                     q.genreId != null ||
@@ -253,130 +300,150 @@ class _BookListScreenState extends State<BookListScreen> {
           Expanded(
             child: switch (notifier.status) {
               LoadStatus.idle || LoadStatus.loading => const Center(
-                  child: CircularProgressIndicator(),
-                ),
+                child: CircularProgressIndicator(),
+              ),
               LoadStatus.error => Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                      const SizedBox(height: 8),
-                      Text(notifier.error ?? 'Произошла ошибка'),
-                      const SizedBox(height: 12),
-                      FilledButton(
-                        onPressed: notifier.load,
-                        child: const Text('Повторить'),
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(notifier.error ?? 'Произошла ошибка'),
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      onPressed: notifier.load,
+                      child: const Text('Повторить'),
+                    ),
+                  ],
                 ),
+              ),
               LoadStatus.success when notifier.result.items.isEmpty => Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.search_off, size: 48, color: Colors.grey),
-                      const SizedBox(height: 8),
-                      const Text('Книг по заданным критериям не найдено'),
-                      const SizedBox(height: 8),
-                      OutlinedButton(
-                        onPressed: () => _pushQuery(const BookQuery()),
-                        child: const Text('Очистить фильтры'),
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.search_off, size: 48, color: Colors.grey),
+                    const SizedBox(height: 8),
+                    const Text('Книг по заданным критериям не найдено'),
+                    const SizedBox(height: 8),
+                    OutlinedButton(
+                      onPressed: () => _pushQuery(const BookQuery()),
+                      child: const Text('Очистить фильтры'),
+                    ),
+                  ],
                 ),
-              LoadStatus.success => isCompact
-                  ? EntityCardList<Book>(
-                      items: notifier.result.items,
-                      idOf: (b) => b.id,
-                      selected: notifier.selected,
-                      onToggleSelect: notifier.toggleSelection,
-                      titleBuilder: (ctx, b) => Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              b.title,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                decoration: b.isDeleted ? TextDecoration.lineThrough : null,
-                              ),
-                            ),
-                          ),
-                          if (b.isDeleted)
-                            const Chip(
-                              label: Text('Удалена', style: TextStyle(fontSize: 10)),
-                              padding: EdgeInsets.zero,
-                              visualDensity: VisualDensity.compact,
-                            ),
-                        ],
-                      ),
-                      subtitleBuilder: (ctx, b) => Text(
-                        'ISBN: ${b.isbn} | Год: ${b.year} | Стр: ${b.pages}\nЭкз: ${b.copiesAvailable}/${b.copiesTotal}',
-                      ),
-                      actions: (b) => _buildActions(context, notifier, b),
-                    )
-                  : EntityTable<Book>(
-                      items: notifier.result.items,
-                      idOf: (b) => b.id,
-                      selected: notifier.selected,
-                      onToggleSelect: notifier.toggleSelection,
-                      onToggleSelectAll: notifier.toggleSelectAll,
-                      isAllSelected: notifier.isAllSelected,
-                      sortField: q.sortField,
-                      sortAscending: q.sortAscending,
-                      onSort: (field) {
-                        final asc = field == q.sortField ? !q.sortAscending : true;
-                        _pushQuery(q.copyWith(sortField: field, sortAscending: asc));
-                      },
-                      columns: [
-                        TableColumnSpec(
-                          label: 'Название',
-                          sortField: 'title',
-                          build: (b) => Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
+              ),
+              LoadStatus.success =>
+                isCompact
+                    ? EntityCardList<Book>(
+                        items: notifier.result.items,
+                        idOf: (b) => b.id,
+                        selected: notifier.selected,
+                        onToggleSelect: notifier.toggleSelection,
+                        titleBuilder: (ctx, b) => Row(
+                          children: [
+                            Expanded(
+                              child: Text(
                                 b.title,
                                 style: TextStyle(
-                                  decoration: b.isDeleted ? TextDecoration.lineThrough : null,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: b.isDeleted
+                                      ? TextDecoration.lineThrough
+                                      : null,
                                 ),
                               ),
-                              if (b.isDeleted)
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 6),
-                                  child: Chip(
-                                    label: Text('Удалена', style: TextStyle(fontSize: 10)),
-                                    padding: EdgeInsets.zero,
-                                    visualDensity: VisualDensity.compact,
+                            ),
+                            if (b.isDeleted)
+                              const Chip(
+                                label: Text(
+                                  'Удалена',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                padding: EdgeInsets.zero,
+                                visualDensity: VisualDensity.compact,
+                              ),
+                          ],
+                        ),
+                        subtitleBuilder: (ctx, b) => Text(
+                          'ISBN: ${b.isbn} | Год: ${b.year} | Стр: ${b.pages}\nЭкз: ${b.copiesAvailable}/${b.copiesTotal}',
+                        ),
+                        actions: (b) => _buildActions(context, notifier, b),
+                      )
+                    : EntityTable<Book>(
+                        items: notifier.result.items,
+                        idOf: (b) => b.id,
+                        selected: notifier.selected,
+                        onToggleSelect: notifier.toggleSelection,
+                        onToggleSelectAll: notifier.toggleSelectAll,
+                        isAllSelected: notifier.isAllSelected,
+                        sortField: q.sortField,
+                        sortAscending: q.sortAscending,
+                        onSort: (field) {
+                          final asc = field == q.sortField
+                              ? !q.sortAscending
+                              : true;
+                          _pushQuery(
+                            q.copyWith(sortField: field, sortAscending: asc),
+                          );
+                        },
+                        columns: [
+                          TableColumnSpec(
+                            label: 'Название',
+                            sortField: 'title',
+                            build: (b) => Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  b.title,
+                                  style: TextStyle(
+                                    decoration: b.isDeleted
+                                        ? TextDecoration.lineThrough
+                                        : null,
                                   ),
                                 ),
-                            ],
+                                if (b.isDeleted)
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 6),
+                                    child: Chip(
+                                      label: Text(
+                                        'Удалена',
+                                        style: TextStyle(fontSize: 10),
+                                      ),
+                                      padding: EdgeInsets.zero,
+                                      visualDensity: VisualDensity.compact,
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                        TableColumnSpec(
-                          label: 'ISBN',
-                          build: (b) => Text(b.isbn),
-                        ),
-                        TableColumnSpec(
-                          label: 'Год',
-                          sortField: 'year',
-                          numeric: true,
-                          build: (b) => Text('${b.year}'),
-                        ),
-                        TableColumnSpec(
-                          label: 'Страниц',
-                          sortField: 'pages',
-                          numeric: true,
-                          build: (b) => Text('${b.pages}'),
-                        ),
-                        TableColumnSpec(
-                          label: 'Доступно экз.',
-                          numeric: true,
-                          build: (b) => Text('${b.copiesAvailable} / ${b.copiesTotal}'),
-                        ),
-                      ],
-                      actions: (b) => _buildActions(context, notifier, b),
-                    ),
+                          TableColumnSpec(
+                            label: 'ISBN',
+                            build: (b) => Text(b.isbn),
+                          ),
+                          TableColumnSpec(
+                            label: 'Год',
+                            sortField: 'year',
+                            numeric: true,
+                            build: (b) => Text('${b.year}'),
+                          ),
+                          TableColumnSpec(
+                            label: 'Страниц',
+                            sortField: 'pages',
+                            numeric: true,
+                            build: (b) => Text('${b.pages}'),
+                          ),
+                          TableColumnSpec(
+                            label: 'Доступно экз.',
+                            numeric: true,
+                            build: (b) =>
+                                Text('${b.copiesAvailable} / ${b.copiesTotal}'),
+                          ),
+                        ],
+                        actions: (b) => _buildActions(context, notifier, b),
+                      ),
             },
           ),
 
@@ -386,14 +453,19 @@ class _BookListScreenState extends State<BookListScreen> {
             size: notifier.result.size,
             total: notifier.result.total,
             onPageChanged: (newPage) => _pushQuery(q.copyWith(page: newPage)),
-            onSizeChanged: (newSize) => _pushQuery(q.copyWith(size: newSize, page: 1)),
+            onSizeChanged: (newSize) =>
+                _pushQuery(q.copyWith(size: newSize, page: 1)),
           ),
         ],
       ),
     );
   }
 
-  List<Widget> _buildActions(BuildContext context, BookListNotifier notifier, Book b) {
+  List<Widget> _buildActions(
+    BuildContext context,
+    BookListNotifier notifier,
+    Book b,
+  ) {
     return [
       IconButton(
         tooltip: 'Карточка книги',

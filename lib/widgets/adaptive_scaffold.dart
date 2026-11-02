@@ -21,62 +21,114 @@ class AdaptiveScaffold extends StatelessWidget {
     final size = screenSizeOf(context);
 
     final destinations = [
-      const NavigationRailDestination(icon: Icon(Icons.menu_book), label: Text('Книги')),
+      const NavigationDestination(icon: Icon(Icons.menu_book), label: 'Книги'),
       if (auth.has(Role.librarian)) ...[
-        const NavigationRailDestination(icon: Icon(Icons.people), label: Text('Авторы')),
-        const NavigationRailDestination(icon: Icon(Icons.category), label: Text('Жанры')),
-        const NavigationRailDestination(icon: Icon(Icons.business), label: Text('Издательства')),
-        const NavigationRailDestination(icon: Icon(Icons.badge), label: Text('Читатели')),
+        const NavigationDestination(icon: Icon(Icons.people), label: 'Авторы'),
+        const NavigationDestination(icon: Icon(Icons.category), label: 'Жанры'),
+        const NavigationDestination(
+          icon: Icon(Icons.business),
+          label: 'Издательства',
+        ),
+        const NavigationDestination(icon: Icon(Icons.badge), label: 'Читатели'),
       ],
       if (auth.role == Role.reader)
-        const NavigationRailDestination(icon: Icon(Icons.bookmark), label: Text('Мои книги')),
+        const NavigationDestination(
+          icon: Icon(Icons.bookmark),
+          label: 'Мои книги',
+        ),
       if (auth.has(Role.admin))
-        const NavigationRailDestination(icon: Icon(Icons.admin_panel_settings), label: Text('Админ')),
+        const NavigationDestination(
+          icon: Icon(Icons.admin_panel_settings),
+          label: 'Админ',
+        ),
     ];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Библиотечная система'),
-        actions: [
-          if (auth.isAuthenticated) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Center(
-                child: Text(
-                  '${auth.user?.fullName} (${auth.role.title})',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+    final railDestinations = destinations
+        .map(
+          (d) => NavigationRailDestination(icon: d.icon, label: Text(d.label)),
+        )
+        .toList();
+
+    void onNavigate(int idx) {
+      final routes = [
+        '/books',
+        if (auth.has(Role.librarian)) ...[
+          '/authors',
+          '/genres',
+          '/publishers',
+          '/readers',
+        ],
+        if (auth.role == Role.reader) '/my-loans',
+        if (auth.has(Role.admin)) '/admin/users',
+      ];
+      if (idx < routes.length) context.go(routes[idx]);
+    }
+
+    final appBar = AppBar(
+      title: const Text('Библиотечная система'),
+      actions: [
+        if (auth.isAuthenticated) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Center(
+              child: Text(
+                '${auth.user?.fullName} (${auth.role.title})',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            IconButton(
-              tooltip: 'Выйти',
-              icon: const Icon(Icons.logout),
-              onPressed: () async {
-                await auth.logout();
-                if (context.mounted) context.go('/login');
-              },
-            ),
-          ],
+          ),
+          IconButton(
+            tooltip: 'Выйти из системы',
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await auth.logout();
+              if (context.mounted) context.go('/login');
+            },
+          ),
         ],
+      ],
+    );
+
+    // Ограничение ширины для экранов 1920px
+    final boundedContent = Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1400),
+        child: child,
       ),
+    );
+
+    // 360px: мобильная компоновка с нижней навигацией
+    if (size == ScreenSize.compact) {
+      return Scaffold(
+        appBar: appBar,
+        body: boundedContent,
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: currentIndex.clamp(0, destinations.length - 1),
+          destinations: destinations,
+          onDestinationSelected: onNavigate,
+        ),
+      );
+    }
+
+    // 768px, 1280px, 1920px: боковая панель навигации
+    final isExpandedRail =
+        size == ScreenSize.expanded || size == ScreenSize.ultra;
+
+    return Scaffold(
+      appBar: appBar,
       body: Row(
         children: [
           NavigationRail(
-            selectedIndex: currentIndex.clamp(0, destinations.length - 1),
-            extended: size == ScreenSize.expanded,
-            destinations: destinations,
-            onDestinationSelected: (idx) {
-              final routes = [
-                '/books',
-                if (auth.has(Role.librarian)) ...['/authors', '/genres', '/publishers', '/readers'],
-                if (auth.role == Role.reader) '/my-loans',
-                if (auth.has(Role.admin)) '/admin/users',
-              ];
-              if (idx < routes.length) context.go(routes[idx]);
-            },
+            selectedIndex: currentIndex.clamp(0, railDestinations.length - 1),
+            extended: isExpandedRail,
+            labelType: isExpandedRail
+                ? NavigationRailLabelType.none
+                : NavigationRailLabelType.all,
+            destinations: railDestinations,
+            onDestinationSelected: onNavigate,
           ),
           const VerticalDivider(width: 1),
-          Expanded(child: child),
+          Expanded(child: boundedContent),
         ],
       ),
     );

@@ -65,10 +65,18 @@ class _AuthorFormScreenState extends State<AuthorFormScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Несохранённые изменения'),
-        content: const Text('Данные автора не сохранены. Выйти без сохранения?'),
+        content: const Text(
+          'Данные автора не сохранены. Выйти без сохранения?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Остаться')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Выйти')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Остаться'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Выйти'),
+          ),
         ],
       ),
     );
@@ -102,9 +110,9 @@ class _AuthorFormScreenState extends State<AuthorFormScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка сохранения: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Ошибка сохранения: $e')));
     }
   }
 
@@ -134,7 +142,9 @@ class _AuthorFormScreenState extends State<AuthorFormScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.isEditing ? 'Редактирование автора' : 'Новый автор'),
+          title: Text(
+            widget.isEditing ? 'Редактирование автора' : 'Новый автор',
+          ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () async {
@@ -162,7 +172,10 @@ class _AuthorFormScreenState extends State<AuthorFormScreen> {
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (_) => _markDirty(),
-                      validator: V.combine([V.required(), V.length(min: 2, max: 100)]),
+                      validator: V.combine([
+                        V.required(),
+                        V.length(min: 2, max: 100),
+                      ]),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -172,7 +185,10 @@ class _AuthorFormScreenState extends State<AuthorFormScreen> {
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (_) => _markDirty(),
-                      validator: V.combine([V.required(), V.length(min: 2, max: 100)]),
+                      validator: V.combine([
+                        V.required(),
+                        V.length(min: 2, max: 100),
+                      ]),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -182,7 +198,10 @@ class _AuthorFormScreenState extends State<AuthorFormScreen> {
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (_) => _markDirty(),
-                      validator: V.combine([V.required(), V.length(min: 2, max: 100)]),
+                      validator: V.combine([
+                        V.required(),
+                        V.length(min: 2, max: 100),
+                      ]),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -204,10 +223,17 @@ class _AuthorFormScreenState extends State<AuthorFormScreen> {
                           ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
                           : const Icon(Icons.save),
-                      label: Text(widget.isEditing ? 'Сохранить изменения' : 'Создать автора'),
+                      label: Text(
+                        widget.isEditing
+                            ? 'Сохранить изменения'
+                            : 'Создать автора',
+                      ),
                       onPressed: _isSaving ? null : _submit,
                     ),
                   ],

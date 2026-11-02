@@ -43,7 +43,10 @@ class BookDetailScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(book.title, style: Theme.of(context).textTheme.headlineSmall),
+                      Text(
+                        book.title,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
                       const SizedBox(height: 12),
                       ListTile(
                         leading: const Icon(Icons.qr_code),
@@ -63,12 +66,18 @@ class BookDetailScreen extends StatelessWidget {
                       ListTile(
                         leading: const Icon(Icons.inventory),
                         title: const Text('Экземпляры в наличии'),
-                        subtitle: Text('${book.copiesAvailable} из ${book.copiesTotal}'),
+                        subtitle: Text(
+                          '${book.copiesAvailable} из ${book.copiesTotal}',
+                        ),
                       ),
                       ListTile(
                         leading: const Icon(Icons.info),
                         title: const Text('Статус записи'),
-                        subtitle: Text(book.isDeleted ? 'Удалена (${book.deletedAt})' : 'Активна'),
+                        subtitle: Text(
+                          book.isDeleted
+                              ? 'Удалена (${book.deletedAt})'
+                              : 'Активна',
+                        ),
                       ),
                     ],
                   ),

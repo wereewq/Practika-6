@@ -33,13 +33,20 @@ class _PublisherListScreenState extends State<PublisherListScreen> {
     context.read<PublisherListNotifier>().applyQuery(q);
   }
 
-  Future<void> _handleDelete(Publisher p, PublisherListNotifier notifier) async {
+  Future<void> _handleDelete(
+    Publisher p,
+    PublisherListNotifier notifier,
+  ) async {
     final error = await notifier.softDelete(p.id);
     if (error != null && mounted) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          icon: const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 48),
+          icon: const Icon(
+            Icons.warning_amber_rounded,
+            color: Colors.orange,
+            size: 48,
+          ),
           title: const Text('Отказ в удалении'),
           content: Text(error),
           actions: [
@@ -91,7 +98,8 @@ class _PublisherListScreenState extends State<PublisherListScreen> {
                 FilterChip(
                   label: const Text('Включая удалённые'),
                   selected: q.includeDeleted,
-                  onSelected: (val) => _pushQuery(q.copyWith(includeDeleted: val)),
+                  onSelected: (val) =>
+                      _pushQuery(q.copyWith(includeDeleted: val)),
                 ),
               ],
             ),
@@ -99,93 +107,111 @@ class _PublisherListScreenState extends State<PublisherListScreen> {
           const Divider(height: 1),
           Expanded(
             child: switch (notifier.status) {
-              LoadStatus.idle || LoadStatus.loading => const Center(child: CircularProgressIndicator()),
-              LoadStatus.error => Center(child: Text(notifier.error ?? 'Ошибка')),
-              LoadStatus.success when notifier.result.items.isEmpty => const Center(
-                  child: Text('Издательства не найдены'),
-                ),
-              LoadStatus.success => isCompact
-                  ? EntityCardList<Publisher>(
-                      items: notifier.result.items,
-                      idOf: (p) => p.id,
-                      selected: notifier.selected,
-                      onToggleSelect: notifier.toggleSelection,
-                      titleBuilder: (ctx, p) => Text(
-                        p.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          decoration: p.isDeleted ? TextDecoration.lineThrough : null,
-                        ),
-                      ),
-                      subtitleBuilder: (ctx, p) => Text('Город: ${p.city} | Сайт: ${p.website}'),
-                      actions: (p) => [
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () => context.go('/publishers/${p.id}/edit'),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () => _handleDelete(p, notifier),
-                        ),
-                      ],
-                    )
-                  : EntityTable<Publisher>(
-                      items: notifier.result.items,
-                      idOf: (p) => p.id,
-                      selected: notifier.selected,
-                      onToggleSelect: notifier.toggleSelection,
-                      sortField: q.sortField,
-                      sortAscending: q.sortAscending,
-                      onSort: (field) {
-                        final asc = field == q.sortField ? !q.sortAscending : true;
-                        _pushQuery(q.copyWith(sortField: field, sortAscending: asc));
-                      },
-                      columns: [
-                        TableColumnSpec(
-                          label: 'Название',
-                          sortField: 'name',
-                          build: (p) => Text(
-                            p.name,
-                            style: TextStyle(
-                              decoration: p.isDeleted ? TextDecoration.lineThrough : null,
-                            ),
+              LoadStatus.idle || LoadStatus.loading => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              LoadStatus.error => Center(
+                child: Text(notifier.error ?? 'Ошибка'),
+              ),
+              LoadStatus.success when notifier.result.items.isEmpty =>
+                const Center(child: Text('Издательства не найдены')),
+              LoadStatus.success =>
+                isCompact
+                    ? EntityCardList<Publisher>(
+                        items: notifier.result.items,
+                        idOf: (p) => p.id,
+                        selected: notifier.selected,
+                        onToggleSelect: notifier.toggleSelection,
+                        titleBuilder: (ctx, p) => Text(
+                          p.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            decoration: p.isDeleted
+                                ? TextDecoration.lineThrough
+                                : null,
                           ),
                         ),
-                        TableColumnSpec(
-                          label: 'Город',
-                          sortField: 'city',
-                          build: (p) => Text(p.city),
-                        ),
-                        TableColumnSpec(
-                          label: 'Веб-сайт',
-                          build: (p) => Text(p.website),
-                        ),
-                      ],
-                      actions: (p) => [
-                        IconButton(
-                          tooltip: 'Подробнее',
-                          icon: const Icon(Icons.info_outline),
-                          onPressed: () => context.go('/publishers/${p.id}'),
-                        ),
-                        IconButton(
-                          tooltip: 'Редактировать',
-                          icon: const Icon(Icons.edit),
-                          onPressed: () => context.go('/publishers/${p.id}/edit'),
-                        ),
-                        if (p.isDeleted)
+                        subtitleBuilder: (ctx, p) =>
+                            Text('Город: ${p.city} | Сайт: ${p.website}'),
+                        actions: (p) => [
                           IconButton(
-                            tooltip: 'Восстановить',
-                            icon: const Icon(Icons.restore_from_trash, color: Colors.green),
-                            onPressed: () => notifier.restore(p.id),
-                          )
-                        else
+                            icon: const Icon(Icons.edit),
+                            onPressed: () =>
+                                context.go('/publishers/${p.id}/edit'),
+                          ),
                           IconButton(
-                            tooltip: 'Удалить',
                             icon: const Icon(Icons.delete_outline),
                             onPressed: () => _handleDelete(p, notifier),
                           ),
-                      ],
-                    ),
+                        ],
+                      )
+                    : EntityTable<Publisher>(
+                        items: notifier.result.items,
+                        idOf: (p) => p.id,
+                        selected: notifier.selected,
+                        onToggleSelect: notifier.toggleSelection,
+                        sortField: q.sortField,
+                        sortAscending: q.sortAscending,
+                        onSort: (field) {
+                          final asc = field == q.sortField
+                              ? !q.sortAscending
+                              : true;
+                          _pushQuery(
+                            q.copyWith(sortField: field, sortAscending: asc),
+                          );
+                        },
+                        columns: [
+                          TableColumnSpec(
+                            label: 'Название',
+                            sortField: 'name',
+                            build: (p) => Text(
+                              p.name,
+                              style: TextStyle(
+                                decoration: p.isDeleted
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                              ),
+                            ),
+                          ),
+                          TableColumnSpec(
+                            label: 'Город',
+                            sortField: 'city',
+                            build: (p) => Text(p.city),
+                          ),
+                          TableColumnSpec(
+                            label: 'Веб-сайт',
+                            build: (p) => Text(p.website),
+                          ),
+                        ],
+                        actions: (p) => [
+                          IconButton(
+                            tooltip: 'Подробнее',
+                            icon: const Icon(Icons.info_outline),
+                            onPressed: () => context.go('/publishers/${p.id}'),
+                          ),
+                          IconButton(
+                            tooltip: 'Редактировать',
+                            icon: const Icon(Icons.edit),
+                            onPressed: () =>
+                                context.go('/publishers/${p.id}/edit'),
+                          ),
+                          if (p.isDeleted)
+                            IconButton(
+                              tooltip: 'Восстановить',
+                              icon: const Icon(
+                                Icons.restore_from_trash,
+                                color: Colors.green,
+                              ),
+                              onPressed: () => notifier.restore(p.id),
+                            )
+                          else
+                            IconButton(
+                              tooltip: 'Удалить',
+                              icon: const Icon(Icons.delete_outline),
+                              onPressed: () => _handleDelete(p, notifier),
+                            ),
+                        ],
+                      ),
             },
           ),
           PaginationBar(

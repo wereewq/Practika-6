@@ -1,0 +1,44 @@
+name: CI/CD Web Deployment
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify formatting and analyzer
+        run: |
+          dart format --output=none --set-exit-if-changed lib test
+          flutter analyze
+
+      - name: Run test suite
+        run: flutter test
+
+      - name: Build Web release
+        run: |
+          flutter build web --release --base-href /${{ github.event.repository.name }}/
+          cp build/web/index.html build/web/404.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web

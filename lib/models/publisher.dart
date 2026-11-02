@@ -32,20 +32,20 @@ class Publisher {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'city': city,
-        'website': website,
-        'deletedAt': deletedAt?.toIso8601String(),
-      };
+    'id': id,
+    'name': name,
+    'city': city,
+    'website': website,
+    'deletedAt': deletedAt?.toIso8601String(),
+  };
 
   factory Publisher.fromJson(Map<String, dynamic> json) => Publisher(
-        id: json['id'] as int? ?? 0,
-        name: json['name'] as String? ?? '',
-        city: json['city'] as String? ?? '',
-        website: json['website'] as String? ?? '',
-        deletedAt: json['deletedAt'] == null
-            ? null
-            : DateTime.tryParse(json['deletedAt'] as String),
-      );
+    id: json['id'] as int? ?? 0,
+    name: json['name'] as String? ?? '',
+    city: json['city'] as String? ?? '',
+    website: json['website'] as String? ?? '',
+    deletedAt: json['deletedAt'] == null
+        ? null
+        : DateTime.tryParse(json['deletedAt'] as String),
+  );
 }

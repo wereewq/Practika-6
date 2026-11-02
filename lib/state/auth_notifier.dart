@@ -26,7 +26,8 @@ class AuthNotifier extends ChangeNotifier {
   bool get isAuthenticated => _user != null;
   Role get role => _user?.role ?? Role.reader;
 
-  bool has(Role targetRole) => _user != null && _user!.role.level >= targetRole.level;
+  bool has(Role targetRole) =>
+      _user != null && _user!.role.level >= targetRole.level;
 
   Future<void> restore() async {
     _accessToken = _prefs.getString(_kAccess);
@@ -63,10 +64,12 @@ class AuthNotifier extends ChangeNotifier {
   }
 
   Future<void> login(String username, String password) async {
-    final res = await guard(() => _dio.post(
-          '/auth/login',
-          data: {'username': username, 'password': password},
-        ));
+    final res = await guard(
+      () => _dio.post(
+        '/auth/login',
+        data: {'username': username, 'password': password},
+      ),
+    );
     final data = res.data as Map<String, dynamic>;
     _accessToken = data['accessToken'] as String;
     _refreshToken = data['refreshToken'] as String;
@@ -84,15 +87,17 @@ class AuthNotifier extends ChangeNotifier {
     required String fullName,
     Role role = Role.reader,
   }) async {
-    final res = await guard(() => _dio.post(
-          '/auth/register',
-          data: {
-            'username': username,
-            'password': password,
-            'fullName': fullName,
-            'role': role.name,
-          },
-        ));
+    final res = await guard(
+      () => _dio.post(
+        '/auth/register',
+        data: {
+          'username': username,
+          'password': password,
+          'fullName': fullName,
+          'role': role.name,
+        },
+      ),
+    );
     final data = res.data as Map<String, dynamic>;
     _accessToken = data['accessToken'] as String;
     _refreshToken = data['refreshToken'] as String;

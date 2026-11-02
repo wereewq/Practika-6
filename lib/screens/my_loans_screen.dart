@@ -6,7 +6,9 @@ class MyLoansScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Мои книги и продление срока (Читатель)')),
+      appBar: AppBar(
+        title: const Text('Мои книги и продление срока (Читатель)'),
+      ),
       body: const Center(
         child: Text('Список книг, выданных текущему читателю.'),
       ),

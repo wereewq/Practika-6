@@ -24,17 +24,24 @@ class PersistentAuthorRepository implements AuthorRepository {
     } else {
       try {
         final list = jsonDecode(raw) as List;
-        _authors = list.map((e) => Author.fromJson(e as Map<String, dynamic>)).toList();
+        _authors = list
+            .map((e) => Author.fromJson(e as Map<String, dynamic>))
+            .toList();
       } catch (_) {
         _authors = [...seedAuthors];
         _persist();
       }
     }
-    _nextId = (_authors.map((a) => a.id).fold(0, (max, id) => id > max ? id : max)) + 1;
+    _nextId =
+        (_authors.map((a) => a.id).fold(0, (max, id) => id > max ? id : max)) +
+        1;
   }
 
   Future<void> _persist() async {
-    await _prefs.setString(_key, jsonEncode(_authors.map((a) => a.toJson()).toList()));
+    await _prefs.setString(
+      _key,
+      jsonEncode(_authors.map((a) => a.toJson()).toList()),
+    );
   }
 
   @override
@@ -50,10 +57,12 @@ class PersistentAuthorRepository implements AuthorRepository {
     if (q.search.trim().isNotEmpty) {
       final needle = q.search.trim().toLowerCase();
       rows = rows
-          .where((a) =>
-              a.lastName.toLowerCase().contains(needle) ||
-              a.firstName.toLowerCase().contains(needle) ||
-              a.country.toLowerCase().contains(needle))
+          .where(
+            (a) =>
+                a.lastName.toLowerCase().contains(needle) ||
+                a.firstName.toLowerCase().contains(needle) ||
+                a.country.toLowerCase().contains(needle),
+          )
           .toList();
     }
     if (q.country != null && q.country!.isNotEmpty) {

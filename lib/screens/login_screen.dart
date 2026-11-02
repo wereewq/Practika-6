@@ -28,9 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       await context.read<AuthNotifier>().login(
-            _usernameController.text.trim(),
-            _passwordController.text,
-          );
+        _usernameController.text.trim(),
+        _passwordController.text,
+      );
       if (!mounted) return;
       final target = widget.from != null && widget.from!.isNotEmpty
           ? Uri.decodeComponent(widget.from!)
@@ -62,7 +62,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Icon(Icons.local_library, size: 48, color: Colors.indigo),
+                    const Icon(
+                      Icons.local_library,
+                      size: 48,
+                      color: Colors.indigo,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'Вход в библиотечную систему',
@@ -79,25 +83,44 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: Colors.red.shade200),
                         ),
-                        child: Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
+                        child: Text(
+                          _errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
                       ),
                     TextFormField(
                       controller: _usernameController,
-                      decoration: const InputDecoration(labelText: 'Логин *', border: OutlineInputBorder()),
-                      validator: (v) => v == null || v.trim().isEmpty ? 'Введите логин' : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Логин *',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (v) => v == null || v.trim().isEmpty
+                          ? 'Введите логин'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: true,
-                      decoration: const InputDecoration(labelText: 'Пароль *', border: OutlineInputBorder()),
-                      validator: (v) => v == null || v.isEmpty ? 'Введите пароль' : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Пароль *',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (v) =>
+                          v == null || v.isEmpty ? 'Введите пароль' : null,
                     ),
                     const SizedBox(height: 24),
                     FilledButton(
                       onPressed: _isLoading ? null : _submit,
                       child: _isLoading
-                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
                           : const Text('Войти'),
                     ),
                     const SizedBox(height: 12),

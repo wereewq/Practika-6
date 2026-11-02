@@ -121,7 +121,9 @@ GoRouter createRouter(AuthNotifier auth) {
           if (loc.startsWith('/genres')) idx = 2;
           if (loc.startsWith('/publishers')) idx = 3;
           if (loc.startsWith('/readers')) idx = 4;
-          if (loc.startsWith('/my-loans')) idx = auth.has(Role.librarian) ? 5 : 1;
+          if (loc.startsWith('/my-loans')) {
+            idx = auth.has(Role.librarian) ? 5 : 1;
+          }
           if (loc.startsWith('/admin')) idx = auth.has(Role.librarian) ? 6 : 2;
 
           return AdaptiveScaffold(currentIndex: idx, child: child);
@@ -129,21 +131,29 @@ GoRouter createRouter(AuthNotifier auth) {
         routes: [
           GoRoute(
             path: '/books',
-            builder: (c, s) => BookListScreen(initialQuery: parseBookQuery(s.uri.queryParameters)),
+            builder: (c, s) => BookListScreen(
+              initialQuery: parseBookQuery(s.uri.queryParameters),
+            ),
             routes: [
               GoRoute(
                 path: 'new',
-                redirect: (context, state) => auth.has(Role.librarian) ? null : '/forbidden',
+                redirect: (context, state) =>
+                    auth.has(Role.librarian) ? null : '/forbidden',
                 builder: (c, s) => const BookFormScreen(),
               ),
               GoRoute(
                 path: ':id',
-                builder: (c, s) => BookDetailScreen(bookId: int.tryParse(s.pathParameters['id'] ?? '') ?? 0),
+                builder: (c, s) => BookDetailScreen(
+                  bookId: int.tryParse(s.pathParameters['id'] ?? '') ?? 0,
+                ),
                 routes: [
                   GoRoute(
                     path: 'edit',
-                    redirect: (context, state) => auth.has(Role.librarian) ? null : '/forbidden',
-                    builder: (c, s) => BookFormScreen(id: int.tryParse(s.pathParameters['id'] ?? '')),
+                    redirect: (context, state) =>
+                        auth.has(Role.librarian) ? null : '/forbidden',
+                    builder: (c, s) => BookFormScreen(
+                      id: int.tryParse(s.pathParameters['id'] ?? ''),
+                    ),
                   ),
                 ],
               ),
@@ -151,44 +161,77 @@ GoRouter createRouter(AuthNotifier auth) {
           ),
           GoRoute(
             path: '/authors',
-            redirect: (context, state) => auth.has(Role.librarian) ? null : '/forbidden',
-            builder: (c, s) => AuthorListScreen(initialQuery: parseAuthorQuery(s.uri.queryParameters)),
+            redirect: (context, state) =>
+                auth.has(Role.librarian) ? null : '/forbidden',
+            builder: (c, s) => AuthorListScreen(
+              initialQuery: parseAuthorQuery(s.uri.queryParameters),
+            ),
             routes: [
               GoRoute(path: 'new', builder: (c, s) => const AuthorFormScreen()),
-              GoRoute(path: ':id', builder: (c, s) => AuthorDetailScreen(authorId: int.tryParse(s.pathParameters['id'] ?? '') ?? 0)),
+              GoRoute(
+                path: ':id',
+                builder: (c, s) => AuthorDetailScreen(
+                  authorId: int.tryParse(s.pathParameters['id'] ?? '') ?? 0,
+                ),
+              ),
             ],
           ),
           GoRoute(
             path: '/genres',
-            redirect: (context, state) => auth.has(Role.librarian) ? null : '/forbidden',
-            builder: (c, s) => const GenreListScreen(initialQuery: GenreQuery()),
+            redirect: (context, state) =>
+                auth.has(Role.librarian) ? null : '/forbidden',
+            builder: (c, s) =>
+                const GenreListScreen(initialQuery: GenreQuery()),
             routes: [
               GoRoute(path: 'new', builder: (c, s) => const GenreFormScreen()),
-              GoRoute(path: ':id', builder: (c, s) => GenreDetailScreen(genreId: int.tryParse(s.pathParameters['id'] ?? '') ?? 0)),
+              GoRoute(
+                path: ':id',
+                builder: (c, s) => GenreDetailScreen(
+                  genreId: int.tryParse(s.pathParameters['id'] ?? '') ?? 0,
+                ),
+              ),
             ],
           ),
           GoRoute(
             path: '/publishers',
-            redirect: (context, state) => auth.has(Role.librarian) ? null : '/forbidden',
-            builder: (c, s) => const PublisherListScreen(initialQuery: PublisherQuery()),
+            redirect: (context, state) =>
+                auth.has(Role.librarian) ? null : '/forbidden',
+            builder: (c, s) =>
+                const PublisherListScreen(initialQuery: PublisherQuery()),
             routes: [
-              GoRoute(path: 'new', builder: (c, s) => const PublisherFormScreen()),
-              GoRoute(path: ':id', builder: (c, s) => PublisherDetailScreen(publisherId: int.tryParse(s.pathParameters['id'] ?? '') ?? 0)),
+              GoRoute(
+                path: 'new',
+                builder: (c, s) => const PublisherFormScreen(),
+              ),
+              GoRoute(
+                path: ':id',
+                builder: (c, s) => PublisherDetailScreen(
+                  publisherId: int.tryParse(s.pathParameters['id'] ?? '') ?? 0,
+                ),
+              ),
             ],
           ),
           GoRoute(
             path: '/readers',
-            redirect: (context, state) => auth.has(Role.librarian) ? null : '/forbidden',
-            builder: (c, s) => const ReaderListScreen(initialQuery: ReaderQuery()),
+            redirect: (context, state) =>
+                auth.has(Role.librarian) ? null : '/forbidden',
+            builder: (c, s) =>
+                const ReaderListScreen(initialQuery: ReaderQuery()),
             routes: [
               GoRoute(path: 'new', builder: (c, s) => const ReaderFormScreen()),
-              GoRoute(path: ':id', builder: (c, s) => ReaderDetailScreen(readerId: int.tryParse(s.pathParameters['id'] ?? '') ?? 0)),
+              GoRoute(
+                path: ':id',
+                builder: (c, s) => ReaderDetailScreen(
+                  readerId: int.tryParse(s.pathParameters['id'] ?? '') ?? 0,
+                ),
+              ),
             ],
           ),
           GoRoute(path: '/my-loans', builder: (c, s) => const MyLoansScreen()),
           GoRoute(
             path: '/admin/users',
-            redirect: (context, state) => auth.has(Role.admin) ? null : '/forbidden',
+            redirect: (context, state) =>
+                auth.has(Role.admin) ? null : '/forbidden',
             builder: (c, s) => const AdminUsersScreen(),
           ),
         ],

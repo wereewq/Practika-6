@@ -53,7 +53,9 @@ Dio buildDio({
         final req = error.requestOptions;
 
         // Автоматический прозрачный Refresh токена при ошибке 401 (кроме запросов /auth/)
-        if (status == 401 && !req.path.contains('/auth/') && onRefreshToken != null) {
+        if (status == 401 &&
+            !req.path.contains('/auth/') &&
+            onRefreshToken != null) {
           try {
             await onRefreshToken();
             final newToken = tokenProvider?.call();
@@ -70,7 +72,8 @@ Dio buildDio({
 
         // Retry для GET запросов при сетевых таймаутах
         final isGet = req.method.toUpperCase() == 'GET';
-        final isNetwork = error.type == DioExceptionType.connectionError ||
+        final isNetwork =
+            error.type == DioExceptionType.connectionError ||
             error.type == DioExceptionType.connectionTimeout;
 
         int retryCount = req.extra['retryCount'] ?? 0;

@@ -56,18 +56,18 @@ class Book {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'isbn': isbn,
-        'year': year,
-        'pages': pages,
-        'publisherId': publisherId,
-        'authorIds': authorIds,
-        'genreIds': genreIds,
-        'copiesTotal': copiesTotal,
-        'copiesAvailable': copiesAvailable,
-        'deletedAt': deletedAt?.toIso8601String(),
-      };
+    'id': id,
+    'title': title,
+    'isbn': isbn,
+    'year': year,
+    'pages': pages,
+    'publisherId': publisherId,
+    'authorIds': authorIds,
+    'genreIds': genreIds,
+    'copiesTotal': copiesTotal,
+    'copiesAvailable': copiesAvailable,
+    'deletedAt': deletedAt?.toIso8601String(),
+  };
 
   factory Book.fromJson(Map<String, dynamic> json) {
     // Разбор publisherId: число или вложенный объект publisher

@@ -16,11 +16,19 @@ class ForbiddenScreen extends StatelessWidget {
             children: [
               const Icon(Icons.gpp_bad_rounded, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              Text('Недостаточно прав', style: Theme.of(context).textTheme.headlineSmall),
+              Text(
+                'Недостаточно прав',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
               const SizedBox(height: 8),
-              const Text('Ваша роль не позволяет просматривать данный раздел системы.'),
+              const Text(
+                'Ваша роль не позволяет просматривать данный раздел системы.',
+              ),
               const SizedBox(height: 20),
-              FilledButton(onPressed: () => context.go('/books'), child: const Text('Вернуться в каталог')),
+              FilledButton(
+                onPressed: () => context.go('/books'),
+                child: const Text('Вернуться в каталог'),
+              ),
             ],
           ),
         ),

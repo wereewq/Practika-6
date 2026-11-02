@@ -52,13 +52,19 @@ class V {
     return (value) => re.hasMatch(value?.trim() ?? '') ? null : message;
   }
 
-  /// Формат ISBN
+  /// Формат ISBN (ISBN-10 или ISBN-13 с дефисами или без)
   static Validator isbn([String message = 'Формат: 978-X-XXX-XXXXX-X']) {
-    final re = RegExp(r'^(?:ISBN(?:-1[03])?:? )?(?=[-0-9 ]{13}$|[-0-9X ]{10}$\vert{}[0-9X]{10}$|[0-9]{13}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$');
     return (value) {
       final text = value?.trim() ?? '';
       if (text.isEmpty) return null;
-      return re.hasMatch(text) ? null : message;
+      final clean = text.replaceAll(RegExp(r'[-\s]'), '');
+      if (clean.length == 13 && RegExp(r'^97[89]\d{10}$').hasMatch(clean)) {
+        return null;
+      }
+      if (clean.length == 10 && RegExp(r'^\d{9}[\dX]$').hasMatch(clean)) {
+        return null;
+      }
+      return message;
     };
   }
 

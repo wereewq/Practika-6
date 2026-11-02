@@ -42,19 +42,33 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
 
   void _pushQuery(AuthorQuery nextQuery) {
     final params = authorQueryToParams(nextQuery);
-    final uri = Uri(path: '/authors', queryParameters: params.isEmpty ? null : params);
+    final uri = Uri(
+      path: '/authors',
+      queryParameters: params.isEmpty ? null : params,
+    );
     context.go(uri.toString());
   }
 
-  Future<void> _confirmDeleteSelected(BuildContext context, AuthorListNotifier notifier) async {
+  Future<void> _confirmDeleteSelected(
+    BuildContext context,
+    AuthorListNotifier notifier,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Удаление авторов'),
-        content: Text('Удалить выбранных авторов (${notifier.selected.length} чел.)?'),
+        content: Text(
+          'Удалить выбранных авторов (${notifier.selected.length} чел.)?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Отмена')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Удалить')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Отмена'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Удалить'),
+          ),
         ],
       ),
     );
@@ -63,16 +77,27 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
     }
   }
 
-  Future<void> _confirmHardDelete(BuildContext context, AuthorListNotifier notifier, Author a) async {
+  Future<void> _confirmHardDelete(
+    BuildContext context,
+    AuthorListNotifier notifier,
+    Author a,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Физическое удаление'),
-        content: Text('Автор «${a.fullName}» будет стёрт навсегда. Продолжить?'),
+        content: Text(
+          'Автор «${a.fullName}» будет стёрт навсегда. Продолжить?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Отмена')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Отмена'),
+          ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Стереть'),
           ),
@@ -148,14 +173,53 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
                       border: OutlineInputBorder(),
                     ),
                     items: const [
-                      DropdownMenuItem(value: null, child: Text('Все страны', overflow: TextOverflow.ellipsis)),
-                      DropdownMenuItem(value: 'Россия', child: Text('Россия', overflow: TextOverflow.ellipsis)),
-                      DropdownMenuItem(value: 'Великобритания', child: Text('Великобритания', overflow: TextOverflow.ellipsis)),
-                      DropdownMenuItem(value: 'Германия', child: Text('Германия', overflow: TextOverflow.ellipsis)),
-                      DropdownMenuItem(value: 'США', child: Text('США', overflow: TextOverflow.ellipsis)),
-                      DropdownMenuItem(value: 'Франция', child: Text('Франция', overflow: TextOverflow.ellipsis)),
-                      DropdownMenuItem(value: 'Колумбия', child: Text('Колумбия', overflow: TextOverflow.ellipsis)),
-                      DropdownMenuItem(value: 'Австро-Венгрия', child: Text('Австро-Венгрия', overflow: TextOverflow.ellipsis)),
+                      DropdownMenuItem(
+                        value: null,
+                        child: Text(
+                          'Все страны',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Россия',
+                        child: Text('Россия', overflow: TextOverflow.ellipsis),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Великобритания',
+                        child: Text(
+                          'Великобритания',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Германия',
+                        child: Text(
+                          'Германия',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'США',
+                        child: Text('США', overflow: TextOverflow.ellipsis),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Франция',
+                        child: Text('Франция', overflow: TextOverflow.ellipsis),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Колумбия',
+                        child: Text(
+                          'Колумбия',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Австро-Венгрия',
+                        child: Text(
+                          'Австро-Венгрия',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                     onChanged: (val) => _pushQuery(q.copyWith(country: val)),
                   ),
@@ -163,7 +227,8 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
                 FilterChip(
                   label: const Text('Включая удалённых'),
                   selected: q.includeDeleted,
-                  onSelected: (val) => _pushQuery(q.copyWith(includeDeleted: val)),
+                  onSelected: (val) =>
+                      _pushQuery(q.copyWith(includeDeleted: val)),
                 ),
                 if (q.search.isNotEmpty || q.country != null)
                   TextButton.icon(
@@ -178,108 +243,128 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
           Expanded(
             child: switch (notifier.status) {
               LoadStatus.idle || LoadStatus.loading => const Center(
-                  child: CircularProgressIndicator(),
-                ),
+                child: CircularProgressIndicator(),
+              ),
               LoadStatus.error => Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                      const SizedBox(height: 8),
-                      Text(notifier.error ?? 'Произошла ошибка'),
-                      const SizedBox(height: 12),
-                      FilledButton(
-                        onPressed: notifier.load,
-                        child: const Text('Повторить'),
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(notifier.error ?? 'Произошла ошибка'),
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      onPressed: notifier.load,
+                      child: const Text('Повторить'),
+                    ),
+                  ],
                 ),
+              ),
               LoadStatus.success when notifier.result.items.isEmpty => Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.person_off, size: 48, color: Colors.grey),
-                      const SizedBox(height: 8),
-                      const Text('Авторов по заданным критериям не найдено'),
-                      const SizedBox(height: 8),
-                      OutlinedButton(
-                        onPressed: () => _pushQuery(const AuthorQuery()),
-                        child: const Text('Очистить фильтры'),
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.person_off, size: 48, color: Colors.grey),
+                    const SizedBox(height: 8),
+                    const Text('Авторов по заданным критериям не найдено'),
+                    const SizedBox(height: 8),
+                    OutlinedButton(
+                      onPressed: () => _pushQuery(const AuthorQuery()),
+                      child: const Text('Очистить фильтры'),
+                    ),
+                  ],
                 ),
-              LoadStatus.success => isCompact
-                  ? EntityCardList<Author>(
-                      items: notifier.result.items,
-                      idOf: (a) => a.id,
-                      selected: notifier.selected,
-                      onToggleSelect: notifier.toggleSelection,
-                      titleBuilder: (ctx, a) => Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              a.fullName,
+              ),
+              LoadStatus.success =>
+                isCompact
+                    ? EntityCardList<Author>(
+                        items: notifier.result.items,
+                        idOf: (a) => a.id,
+                        selected: notifier.selected,
+                        onToggleSelect: notifier.toggleSelection,
+                        titleBuilder: (ctx, a) => Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                a.fullName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  decoration: a.isDeleted
+                                      ? TextDecoration.lineThrough
+                                      : null,
+                                ),
+                              ),
+                            ),
+                            if (a.isDeleted)
+                              const Chip(
+                                label: Text(
+                                  'Удалён',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                padding: EdgeInsets.zero,
+                                visualDensity: VisualDensity.compact,
+                              ),
+                          ],
+                        ),
+                        subtitleBuilder: (ctx, a) => Text(
+                          'Страна: ${a.country} | Год рожд.: ${a.birthYear}',
+                        ),
+                        actions: (a) =>
+                            _buildAuthorActions(context, notifier, a),
+                      )
+                    : EntityTable<Author>(
+                        items: notifier.result.items,
+                        idOf: (a) => a.id,
+                        selected: notifier.selected,
+                        onToggleSelect: notifier.toggleSelection,
+                        onToggleSelectAll: notifier.toggleSelectAll,
+                        isAllSelected: notifier.isAllSelected,
+                        sortField: q.sortField,
+                        sortAscending: q.sortAscending,
+                        onSort: (field) {
+                          final asc = field == q.sortField
+                              ? !q.sortAscending
+                              : true;
+                          _pushQuery(
+                            q.copyWith(sortField: field, sortAscending: asc),
+                          );
+                        },
+                        columns: [
+                          TableColumnSpec(
+                            label: 'Фамилия',
+                            sortField: 'lastName',
+                            build: (a) => Text(
+                              a.lastName,
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                decoration: a.isDeleted ? TextDecoration.lineThrough : null,
+                                decoration: a.isDeleted
+                                    ? TextDecoration.lineThrough
+                                    : null,
                               ),
                             ),
                           ),
-                          if (a.isDeleted)
-                            const Chip(
-                              label: Text('Удалён', style: TextStyle(fontSize: 10)),
-                              padding: EdgeInsets.zero,
-                              visualDensity: VisualDensity.compact,
-                            ),
-                        ],
-                      ),
-                      subtitleBuilder: (ctx, a) => Text('Страна: ${a.country} | Год рожд.: ${a.birthYear}'),
-                      actions: (a) => _buildAuthorActions(context, notifier, a),
-                    )
-                  : EntityTable<Author>(
-                      items: notifier.result.items,
-                      idOf: (a) => a.id,
-                      selected: notifier.selected,
-                      onToggleSelect: notifier.toggleSelection,
-                      onToggleSelectAll: notifier.toggleSelectAll,
-                      isAllSelected: notifier.isAllSelected,
-                      sortField: q.sortField,
-                      sortAscending: q.sortAscending,
-                      onSort: (field) {
-                        final asc = field == q.sortField ? !q.sortAscending : true;
-                        _pushQuery(q.copyWith(sortField: field, sortAscending: asc));
-                      },
-                      columns: [
-                        TableColumnSpec(
-                          label: 'Фамилия',
-                          sortField: 'lastName',
-                          build: (a) => Text(
-                            a.lastName,
-                            style: TextStyle(
-                              decoration: a.isDeleted ? TextDecoration.lineThrough : null,
-                            ),
+                          TableColumnSpec(
+                            label: 'Имя',
+                            build: (a) => Text(a.firstName),
                           ),
-                        ),
-                        TableColumnSpec(
-                          label: 'Имя',
-                          build: (a) => Text(a.firstName),
-                        ),
-                        TableColumnSpec(
-                          label: 'Страна',
-                          sortField: 'country',
-                          build: (a) => Text(a.country),
-                        ),
-                        TableColumnSpec(
-                          label: 'Год рождения',
-                          sortField: 'birthYear',
-                          numeric: true,
-                          build: (a) => Text('${a.birthYear}'),
-                        ),
-                      ],
-                      actions: (a) => _buildAuthorActions(context, notifier, a),
-                    ),
+                          TableColumnSpec(
+                            label: 'Страна',
+                            sortField: 'country',
+                            build: (a) => Text(a.country),
+                          ),
+                          TableColumnSpec(
+                            label: 'Год рождения',
+                            sortField: 'birthYear',
+                            numeric: true,
+                            build: (a) => Text('${a.birthYear}'),
+                          ),
+                        ],
+                        actions: (a) =>
+                            _buildAuthorActions(context, notifier, a),
+                      ),
             },
           ),
           PaginationBar(
@@ -287,14 +372,19 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
             size: notifier.result.size,
             total: notifier.result.total,
             onPageChanged: (newPage) => _pushQuery(q.copyWith(page: newPage)),
-            onSizeChanged: (newSize) => _pushQuery(q.copyWith(size: newSize, page: 1)),
+            onSizeChanged: (newSize) =>
+                _pushQuery(q.copyWith(size: newSize, page: 1)),
           ),
         ],
       ),
     );
   }
 
-  List<Widget> _buildAuthorActions(BuildContext context, AuthorListNotifier notifier, Author a) {
+  List<Widget> _buildAuthorActions(
+    BuildContext context,
+    AuthorListNotifier notifier,
+    Author a,
+  ) {
     return [
       IconButton(
         tooltip: 'Карточка автора',

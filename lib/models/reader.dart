@@ -39,22 +39,22 @@ class Reader {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'fullName': fullName,
-        'email': email,
-        'phone': phone,
-        'card': card.toJson(),
-        'deletedAt': deletedAt?.toIso8601String(),
-      };
+    'id': id,
+    'fullName': fullName,
+    'email': email,
+    'phone': phone,
+    'card': card.toJson(),
+    'deletedAt': deletedAt?.toIso8601String(),
+  };
 
   factory Reader.fromJson(Map<String, dynamic> json) => Reader(
-        id: json['id'] as int? ?? 0,
-        fullName: json['fullName'] as String? ?? '',
-        email: json['email'] as String? ?? '',
-        phone: json['phone'] as String? ?? '',
-        card: LibraryCard.fromJson(json['card'] as Map<String, dynamic>? ?? {}),
-        deletedAt: json['deletedAt'] == null
-            ? null
-            : DateTime.tryParse(json['deletedAt'] as String),
-      );
+    id: json['id'] as int? ?? 0,
+    fullName: json['fullName'] as String? ?? '',
+    email: json['email'] as String? ?? '',
+    phone: json['phone'] as String? ?? '',
+    card: LibraryCard.fromJson(json['card'] as Map<String, dynamic>? ?? {}),
+    deletedAt: json['deletedAt'] == null
+        ? null
+        : DateTime.tryParse(json['deletedAt'] as String),
+  );
 }

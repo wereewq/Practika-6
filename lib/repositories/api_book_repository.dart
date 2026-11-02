@@ -108,9 +108,8 @@ class ApiBookRepository implements BookRepository {
   Future<void> softDelete(int id) => guard(() => _dio.delete('/books/$id'));
 
   @override
-  Future<void> hardDelete(int id) => guard(
-        () => _dio.delete('/books/$id', queryParameters: {'hard': true}),
-      );
+  Future<void> hardDelete(int id) =>
+      guard(() => _dio.delete('/books/$id', queryParameters: {'hard': true}));
 
   @override
   Future<void> restore(int id) => guard(() => _dio.post('/books/$id/restore'));

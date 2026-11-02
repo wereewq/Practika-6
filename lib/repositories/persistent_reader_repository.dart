@@ -25,25 +25,35 @@ class PersistentReaderRepository implements ReaderRepository {
     } else {
       try {
         final list = jsonDecode(raw) as List;
-        _readers = list.map((e) => Reader.fromJson(e as Map<String, dynamic>)).toList();
+        _readers = list
+            .map((e) => Reader.fromJson(e as Map<String, dynamic>))
+            .toList();
       } catch (_) {
         _readers = [...seedReaders];
         _persist();
       }
     }
-    _nextId = (_readers.map((r) => r.id).fold(0, (max, id) => id > max ? id : max)) + 1;
+    _nextId =
+        (_readers.map((r) => r.id).fold(0, (max, id) => id > max ? id : max)) +
+        1;
   }
 
   Future<void> _persist() async {
-    await _prefs.setString(_key, jsonEncode(_readers.map((r) => r.toJson()).toList()));
+    await _prefs.setString(
+      _key,
+      jsonEncode(_readers.map((r) => r.toJson()).toList()),
+    );
   }
 
   void _checkUniqueEmail(String email, {int? excludeId}) {
     final normalized = email.trim().toLowerCase();
-    final duplicate = _readers.any((r) =>
-        r.id != excludeId && r.email.trim().toLowerCase() == normalized);
+    final duplicate = _readers.any(
+      (r) => r.id != excludeId && r.email.trim().toLowerCase() == normalized,
+    );
     if (duplicate) {
-      throw const ValidationException('Ошибка валидации', {'email': 'Читатель с таким адресом почты уже зарегистрирован'});
+      throw const ValidationException('Ошибка валидации', {
+        'email': 'Читатель с таким адресом почты уже зарегистрирован',
+      });
     }
   }
 
@@ -55,10 +65,12 @@ class PersistentReaderRepository implements ReaderRepository {
     if (q.search.trim().isNotEmpty) {
       final needle = q.search.trim().toLowerCase();
       rows = rows
-          .where((r) =>
-              r.fullName.toLowerCase().contains(needle) ||
-              r.email.toLowerCase().contains(needle) ||
-              r.card.cardNumber.toLowerCase().contains(needle))
+          .where(
+            (r) =>
+                r.fullName.toLowerCase().contains(needle) ||
+                r.email.toLowerCase().contains(needle) ||
+                r.card.cardNumber.toLowerCase().contains(needle),
+          )
           .toList();
     }
 

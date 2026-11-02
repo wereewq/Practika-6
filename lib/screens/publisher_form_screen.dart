@@ -63,8 +63,14 @@ class _PublisherFormScreenState extends State<PublisherFormScreen> {
         title: const Text('Несохранённые изменения'),
         content: const Text('Данные издательства не сохранены. Выйти?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Остаться')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Выйти')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Остаться'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Выйти'),
+          ),
         ],
       ),
     );
@@ -97,9 +103,9 @@ class _PublisherFormScreenState extends State<PublisherFormScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка сохранения: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Ошибка сохранения: $e')));
     }
   }
 
@@ -128,7 +134,11 @@ class _PublisherFormScreenState extends State<PublisherFormScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.isEditing ? 'Редактирование издательства' : 'Новое издательство'),
+          title: Text(
+            widget.isEditing
+                ? 'Редактирование издательства'
+                : 'Новое издательство',
+          ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () async {
@@ -156,7 +166,10 @@ class _PublisherFormScreenState extends State<PublisherFormScreen> {
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (_) => _markDirty(),
-                      validator: V.combine([V.required(), V.length(min: 2, max: 100)]),
+                      validator: V.combine([
+                        V.required(),
+                        V.length(min: 2, max: 100),
+                      ]),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -166,7 +179,10 @@ class _PublisherFormScreenState extends State<PublisherFormScreen> {
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (_) => _markDirty(),
-                      validator: V.combine([V.required(), V.length(min: 2, max: 100)]),
+                      validator: V.combine([
+                        V.required(),
+                        V.length(min: 2, max: 100),
+                      ]),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -177,7 +193,10 @@ class _PublisherFormScreenState extends State<PublisherFormScreen> {
                         hintText: 'https://example.com',
                       ),
                       onChanged: (_) => _markDirty(),
-                      validator: V.combine([V.required(), V.length(min: 4, max: 150)]),
+                      validator: V.combine([
+                        V.required(),
+                        V.length(min: 4, max: 150),
+                      ]),
                     ),
                     const SizedBox(height: 24),
                     FilledButton.icon(
@@ -185,10 +204,17 @@ class _PublisherFormScreenState extends State<PublisherFormScreen> {
                           ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
                           : const Icon(Icons.save),
-                      label: Text(widget.isEditing ? 'Сохранить изменения' : 'Создать издательство'),
+                      label: Text(
+                        widget.isEditing
+                            ? 'Сохранить изменения'
+                            : 'Создать издательство',
+                      ),
                       onPressed: _isSaving ? null : _submit,
                     ),
                   ],

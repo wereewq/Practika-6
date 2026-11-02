@@ -48,7 +48,8 @@ class _LibraryAppState extends State<LibraryApp> {
   @override
   void initState() {
     super.initState();
-    _dio = widget.dio ??
+    _dio =
+        widget.dio ??
         buildDio(
           tokenProvider: () => _authNotifier.accessToken,
           onRefreshToken: () => _authNotifier.refreshTokens(),
@@ -64,11 +65,21 @@ class _LibraryAppState extends State<LibraryApp> {
       providers: [
         ChangeNotifierProvider.value(value: _authNotifier),
         Provider<Dio>.value(value: _dio),
-        ProxyProvider<Dio, BookRepository>(update: (_, client, _) => ApiBookRepository(client)),
-        ProxyProvider<Dio, AuthorRepository>(update: (_, client, _) => ApiAuthorRepository(client)),
-        ProxyProvider<Dio, GenreRepository>(update: (_, client, _) => ApiGenreRepository(client)),
-        ProxyProvider<Dio, PublisherRepository>(update: (_, client, _) => ApiPublisherRepository(client)),
-        ProxyProvider<Dio, ReaderRepository>(update: (_, client, _) => ApiReaderRepository(client)),
+        ProxyProvider<Dio, BookRepository>(
+          update: (_, client, _) => ApiBookRepository(client),
+        ),
+        ProxyProvider<Dio, AuthorRepository>(
+          update: (_, client, _) => ApiAuthorRepository(client),
+        ),
+        ProxyProvider<Dio, GenreRepository>(
+          update: (_, client, _) => ApiGenreRepository(client),
+        ),
+        ProxyProvider<Dio, PublisherRepository>(
+          update: (_, client, _) => ApiPublisherRepository(client),
+        ),
+        ProxyProvider<Dio, ReaderRepository>(
+          update: (_, client, _) => ApiReaderRepository(client),
+        ),
         ChangeNotifierProxyProvider<BookRepository, BookListNotifier>(
           create: (ctx) => BookListNotifier(ctx.read<BookRepository>()),
           update: (_, repo, notifier) => notifier ?? BookListNotifier(repo),
@@ -82,8 +93,10 @@ class _LibraryAppState extends State<LibraryApp> {
           update: (_, repo, notifier) => notifier ?? GenreListNotifier(repo),
         ),
         ChangeNotifierProxyProvider<PublisherRepository, PublisherListNotifier>(
-          create: (ctx) => PublisherListNotifier(ctx.read<PublisherRepository>()),
-          update: (_, repo, notifier) => notifier ?? PublisherListNotifier(repo),
+          create: (ctx) =>
+              PublisherListNotifier(ctx.read<PublisherRepository>()),
+          update: (_, repo, notifier) =>
+              notifier ?? PublisherListNotifier(repo),
         ),
         ChangeNotifierProxyProvider<ReaderRepository, ReaderListNotifier>(
           create: (ctx) => ReaderListNotifier(ctx.read<ReaderRepository>()),

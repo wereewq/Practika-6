@@ -71,7 +71,8 @@ class _ReaderListScreenState extends State<ReaderListScreen> {
                 FilterChip(
                   label: const Text('Включая удалённых'),
                   selected: q.includeDeleted,
-                  onSelected: (val) => _pushQuery(q.copyWith(includeDeleted: val)),
+                  onSelected: (val) =>
+                      _pushQuery(q.copyWith(includeDeleted: val)),
                 ),
               ],
             ),
@@ -79,110 +80,131 @@ class _ReaderListScreenState extends State<ReaderListScreen> {
           const Divider(height: 1),
           Expanded(
             child: switch (notifier.status) {
-              LoadStatus.idle || LoadStatus.loading => const Center(child: CircularProgressIndicator()),
-              LoadStatus.error => Center(child: Text(notifier.error ?? 'Ошибка')),
-              LoadStatus.success when notifier.result.items.isEmpty => const Center(
-                  child: Text('Читатели не найдены'),
-                ),
-              LoadStatus.success => isCompact
-                  ? EntityCardList<Reader>(
-                      items: notifier.result.items,
-                      idOf: (r) => r.id,
-                      selected: notifier.selected,
-                      onToggleSelect: notifier.toggleSelection,
-                      titleBuilder: (ctx, r) => Text(
-                        r.fullName,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          decoration: r.isDeleted ? TextDecoration.lineThrough : null,
-                        ),
-                      ),
-                      subtitleBuilder: (ctx, r) => Text(
-                        'Email: ${r.email}\nБилет: ${r.card.cardNumber} (${r.card.isActive ? 'Активен' : 'Заблокирован'})',
-                      ),
-                      actions: (r) => [
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () => context.go('/readers/${r.id}/edit'),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () => notifier.softDelete(r.id),
-                        ),
-                      ],
-                    )
-                  : EntityTable<Reader>(
-                      items: notifier.result.items,
-                      idOf: (r) => r.id,
-                      selected: notifier.selected,
-                      onToggleSelect: notifier.toggleSelection,
-                      sortField: q.sortField,
-                      sortAscending: q.sortAscending,
-                      onSort: (field) {
-                        final asc = field == q.sortField ? !q.sortAscending : true;
-                        _pushQuery(q.copyWith(sortField: field, sortAscending: asc));
-                      },
-                      columns: [
-                        TableColumnSpec(
-                          label: 'ФИО читателя',
-                          sortField: 'fullName',
-                          build: (r) => Text(
-                            r.fullName,
-                            style: TextStyle(
-                              decoration: r.isDeleted ? TextDecoration.lineThrough : null,
-                            ),
+              LoadStatus.idle || LoadStatus.loading => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              LoadStatus.error => Center(
+                child: Text(notifier.error ?? 'Ошибка'),
+              ),
+              LoadStatus.success when notifier.result.items.isEmpty =>
+                const Center(child: Text('Читатели не найдены')),
+              LoadStatus.success =>
+                isCompact
+                    ? EntityCardList<Reader>(
+                        items: notifier.result.items,
+                        idOf: (r) => r.id,
+                        selected: notifier.selected,
+                        onToggleSelect: notifier.toggleSelection,
+                        titleBuilder: (ctx, r) => Text(
+                          r.fullName,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            decoration: r.isDeleted
+                                ? TextDecoration.lineThrough
+                                : null,
                           ),
                         ),
-                        TableColumnSpec(
-                          label: 'Email',
-                          sortField: 'email',
-                          build: (r) => Text(r.email),
+                        subtitleBuilder: (ctx, r) => Text(
+                          'Email: ${r.email}\nБилет: ${r.card.cardNumber} (${r.card.isActive ? 'Активен' : 'Заблокирован'})',
                         ),
-                        TableColumnSpec(
-                          label: 'Телефон',
-                          build: (r) => Text(r.phone),
-                        ),
-                        TableColumnSpec(
-                          label: 'Читательский билет (1-к-1)',
-                          build: (r) => Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(r.card.cardNumber),
-                              const SizedBox(width: 8),
-                              Icon(
-                                r.card.isActive ? Icons.check_circle : Icons.cancel,
-                                size: 16,
-                                color: r.card.isActive ? Colors.green : Colors.red,
-                              ),
-                            ],
+                        actions: (r) => [
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () =>
+                                context.go('/readers/${r.id}/edit'),
                           ),
-                        ),
-                      ],
-                      actions: (r) => [
-                        IconButton(
-                          tooltip: 'Карточка читателя',
-                          icon: const Icon(Icons.info_outline),
-                          onPressed: () => context.go('/readers/${r.id}'),
-                        ),
-                        IconButton(
-                          tooltip: 'Редактировать',
-                          icon: const Icon(Icons.edit),
-                          onPressed: () => context.go('/readers/${r.id}/edit'),
-                        ),
-                        if (r.isDeleted)
                           IconButton(
-                            tooltip: 'Восстановить',
-                            icon: const Icon(Icons.restore_from_trash, color: Colors.green),
-                            onPressed: () => notifier.restore(r.id),
-                          )
-                        else
-                          IconButton(
-                            tooltip: 'Удалить',
                             icon: const Icon(Icons.delete_outline),
                             onPressed: () => notifier.softDelete(r.id),
                           ),
-                      ],
-                    ),
+                        ],
+                      )
+                    : EntityTable<Reader>(
+                        items: notifier.result.items,
+                        idOf: (r) => r.id,
+                        selected: notifier.selected,
+                        onToggleSelect: notifier.toggleSelection,
+                        sortField: q.sortField,
+                        sortAscending: q.sortAscending,
+                        onSort: (field) {
+                          final asc = field == q.sortField
+                              ? !q.sortAscending
+                              : true;
+                          _pushQuery(
+                            q.copyWith(sortField: field, sortAscending: asc),
+                          );
+                        },
+                        columns: [
+                          TableColumnSpec(
+                            label: 'ФИО читателя',
+                            sortField: 'fullName',
+                            build: (r) => Text(
+                              r.fullName,
+                              style: TextStyle(
+                                decoration: r.isDeleted
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                              ),
+                            ),
+                          ),
+                          TableColumnSpec(
+                            label: 'Email',
+                            sortField: 'email',
+                            build: (r) => Text(r.email),
+                          ),
+                          TableColumnSpec(
+                            label: 'Телефон',
+                            build: (r) => Text(r.phone),
+                          ),
+                          TableColumnSpec(
+                            label: 'Читательский билет (1-к-1)',
+                            build: (r) => Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(r.card.cardNumber),
+                                const SizedBox(width: 8),
+                                Icon(
+                                  r.card.isActive
+                                      ? Icons.check_circle
+                                      : Icons.cancel,
+                                  size: 16,
+                                  color: r.card.isActive
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        actions: (r) => [
+                          IconButton(
+                            tooltip: 'Карточка читателя',
+                            icon: const Icon(Icons.info_outline),
+                            onPressed: () => context.go('/readers/${r.id}'),
+                          ),
+                          IconButton(
+                            tooltip: 'Редактировать',
+                            icon: const Icon(Icons.edit),
+                            onPressed: () =>
+                                context.go('/readers/${r.id}/edit'),
+                          ),
+                          if (r.isDeleted)
+                            IconButton(
+                              tooltip: 'Восстановить',
+                              icon: const Icon(
+                                Icons.restore_from_trash,
+                                color: Colors.green,
+                              ),
+                              onPressed: () => notifier.restore(r.id),
+                            )
+                          else
+                            IconButton(
+                              tooltip: 'Удалить',
+                              icon: const Icon(Icons.delete_outline),
+                              onPressed: () => notifier.softDelete(r.id),
+                            ),
+                        ],
+                      ),
             },
           ),
           PaginationBar(

@@ -43,7 +43,10 @@ class AuthorDetailScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(author.fullName, style: Theme.of(context).textTheme.headlineSmall),
+                      Text(
+                        author.fullName,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
                       const SizedBox(height: 12),
                       ListTile(
                         leading: const Icon(Icons.public),
@@ -58,7 +61,11 @@ class AuthorDetailScreen extends StatelessWidget {
                       ListTile(
                         leading: const Icon(Icons.info),
                         title: const Text('Статус записи'),
-                        subtitle: Text(author.isDeleted ? 'Удалён (${author.deletedAt})' : 'Активен'),
+                        subtitle: Text(
+                          author.isDeleted
+                              ? 'Удалён (${author.deletedAt})'
+                              : 'Активен',
+                        ),
                       ),
                     ],
                   ),

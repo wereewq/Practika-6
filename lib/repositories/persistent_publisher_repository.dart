@@ -27,22 +27,33 @@ class PersistentPublisherRepository implements PublisherRepository {
     } else {
       try {
         final list = jsonDecode(raw) as List;
-        _publishers = list.map((e) => Publisher.fromJson(e as Map<String, dynamic>)).toList();
+        _publishers = list
+            .map((e) => Publisher.fromJson(e as Map<String, dynamic>))
+            .toList();
       } catch (_) {
         _publishers = [...seedPublishers];
         _persist();
       }
     }
-    _nextId = (_publishers.map((p) => p.id).fold(0, (max, id) => id > max ? id : max)) + 1;
+    _nextId =
+        (_publishers
+            .map((p) => p.id)
+            .fold(0, (max, id) => id > max ? id : max)) +
+        1;
   }
 
   Future<void> _persist() async {
-    await _prefs.setString(_key, jsonEncode(_publishers.map((p) => p.toJson()).toList()));
+    await _prefs.setString(
+      _key,
+      jsonEncode(_publishers.map((p) => p.toJson()).toList()),
+    );
   }
 
   Future<void> _assertNoLinkedBooks(int publisherId) async {
     final allBooks = await _bookRepository.findAll();
-    final linkedCount = allBooks.where((b) => b.publisherId == publisherId).length;
+    final linkedCount = allBooks
+        .where((b) => b.publisherId == publisherId)
+        .length;
     if (linkedCount > 0) {
       throw CascadeDeleteException(
         'Невозможно удалить издательство: к нему привязано $linkedCount книг(и). Сначала измените или удалите связанные книги.',
@@ -59,14 +70,18 @@ class PersistentPublisherRepository implements PublisherRepository {
   @override
   Future<PageResult<Publisher>> find(PublisherQuery q) async {
     await Future.delayed(const Duration(milliseconds: 100));
-    var rows = _publishers.where((p) => q.includeDeleted || !p.isDeleted).toList();
+    var rows = _publishers
+        .where((p) => q.includeDeleted || !p.isDeleted)
+        .toList();
 
     if (q.search.trim().isNotEmpty) {
       final needle = q.search.trim().toLowerCase();
       rows = rows
-          .where((p) =>
-              p.name.toLowerCase().contains(needle) ||
-              p.city.toLowerCase().contains(needle))
+          .where(
+            (p) =>
+                p.name.toLowerCase().contains(needle) ||
+                p.city.toLowerCase().contains(needle),
+          )
           .toList();
     }
 
@@ -109,7 +124,9 @@ class PersistentPublisherRepository implements PublisherRepository {
   @override
   Future<Publisher> update(Publisher publisher) async {
     final index = _publishers.indexWhere((p) => p.id == publisher.id);
-    if (index == -1) throw StateError('Издательство ${publisher.id} не найдено');
+    if (index == -1) {
+      throw StateError('Издательство ${publisher.id} не найдено');
+    }
     _publishers[index] = publisher;
     await _persist();
     return publisher;

@@ -75,7 +75,10 @@ class ApiGenreRepository implements GenreRepository {
   @override
   Future<Genre> update(Genre genre) => guard(() async {
     _cachedGenres = null;
-    final response = await _dio.put('/genres/${genre.id}', data: genre.toJson());
+    final response = await _dio.put(
+      '/genres/${genre.id}',
+      data: genre.toJson(),
+    );
     return Genre.fromJson(response.data as Map<String, dynamic>);
   });
 

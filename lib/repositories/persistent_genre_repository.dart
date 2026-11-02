@@ -24,17 +24,24 @@ class PersistentGenreRepository implements GenreRepository {
     } else {
       try {
         final list = jsonDecode(raw) as List;
-        _genres = list.map((e) => Genre.fromJson(e as Map<String, dynamic>)).toList();
+        _genres = list
+            .map((e) => Genre.fromJson(e as Map<String, dynamic>))
+            .toList();
       } catch (_) {
         _genres = [...seedGenres];
         _persist();
       }
     }
-    _nextId = (_genres.map((g) => g.id).fold(0, (max, id) => id > max ? id : max)) + 1;
+    _nextId =
+        (_genres.map((g) => g.id).fold(0, (max, id) => id > max ? id : max)) +
+        1;
   }
 
   Future<void> _persist() async {
-    await _prefs.setString(_key, jsonEncode(_genres.map((g) => g.toJson()).toList()));
+    await _prefs.setString(
+      _key,
+      jsonEncode(_genres.map((g) => g.toJson()).toList()),
+    );
   }
 
   @override
@@ -50,9 +57,11 @@ class PersistentGenreRepository implements GenreRepository {
     if (q.search.trim().isNotEmpty) {
       final needle = q.search.trim().toLowerCase();
       rows = rows
-          .where((g) =>
-              g.name.toLowerCase().contains(needle) ||
-              g.description.toLowerCase().contains(needle))
+          .where(
+            (g) =>
+                g.name.toLowerCase().contains(needle) ||
+                g.description.toLowerCase().contains(needle),
+          )
           .toList();
     }
 

@@ -28,10 +28,10 @@ class PaginationBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        border: Border(
-          top: BorderSide(color: Theme.of(context).dividerColor),
-        ),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
       ),
       child: Wrap(
         alignment: WrapAlignment.spaceBetween,
@@ -60,7 +60,10 @@ class PaginationBar extends StatelessWidget {
                 },
               ),
               const SizedBox(width: 16),
-              Text('$from–$to из $total', style: Theme.of(context).textTheme.bodyMedium),
+              Text(
+                '$from–$to из $total',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
             ],
           ),
           Row(
@@ -78,7 +81,10 @@ class PaginationBar extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text('$page / $totalPages', style: const TextStyle(fontWeight: FontWeight.bold)),
+                child: Text(
+                  '$page / $totalPages',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
               IconButton(
                 tooltip: 'Следующая',

@@ -79,7 +79,8 @@ class _BookFormScreenState extends State<BookFormScreen> {
         _yearController.text = existingBook.year.toString();
         _pagesController.text = existingBook.pages.toString();
         _copiesTotalController.text = existingBook.copiesTotal.toString();
-        _copiesAvailableController.text = existingBook.copiesAvailable.toString();
+        _copiesAvailableController.text = existingBook.copiesAvailable
+            .toString();
         _publisherId = existingBook.publisherId;
         _authorIds = [...existingBook.authorIds];
         _genreIds = [...existingBook.genreIds];
@@ -106,10 +107,18 @@ class _BookFormScreenState extends State<BookFormScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Несохранённые изменения'),
-        content: const Text('На форме есть несохранённые данные. Вы действительно хотите уйти?'),
+        content: const Text(
+          'На форме есть несохранённые данные. Вы действительно хотите уйти?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Остаться')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Уйти')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Остаться'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Уйти'),
+          ),
         ],
       ),
     );
@@ -125,7 +134,11 @@ class _BookFormScreenState extends State<BookFormScreen> {
 
     if (availableCopies > totalCopies) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Доступных экземпляров не может быть больше общего количества')),
+        const SnackBar(
+          content: Text(
+            'Доступных экземпляров не может быть больше общего количества',
+          ),
+        ),
       );
       return;
     }
@@ -167,9 +180,9 @@ class _BookFormScreenState extends State<BookFormScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка сохранения: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Ошибка сохранения: $e')));
     }
   }
 
@@ -201,7 +214,9 @@ class _BookFormScreenState extends State<BookFormScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.isEditing ? 'Редактирование книги' : 'Новая книга'),
+          title: Text(
+            widget.isEditing ? 'Редактирование книги' : 'Новая книга',
+          ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () async {
@@ -229,7 +244,10 @@ class _BookFormScreenState extends State<BookFormScreen> {
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (_) => _markDirty(),
-                      validator: V.combine([V.required(), V.length(min: 2, max: 200)]),
+                      validator: V.combine([
+                        V.required(),
+                        V.length(min: 2, max: 200),
+                      ]),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -281,7 +299,9 @@ class _BookFormScreenState extends State<BookFormScreen> {
                             onChanged: (_) => _markDirty(),
                             validator: V.combine([
                               V.required(),
-                              V.positiveInteger('Количество страниц должно быть больше 0'),
+                              V.positiveInteger(
+                                'Количество страниц должно быть больше 0',
+                              ),
                             ]),
                           ),
                         ),
@@ -296,22 +316,26 @@ class _BookFormScreenState extends State<BookFormScreen> {
                         border: OutlineInputBorder(),
                       ),
                       items: _publishers
-                          .map((p) => DropdownMenuItem(
-                                value: p.id,
-                                child: Text('${p.name} (${p.city})'),
-                              ))
+                          .map(
+                            (p) => DropdownMenuItem(
+                              value: p.id,
+                              child: Text('${p.name} (${p.city})'),
+                            ),
+                          )
                           .toList(),
                       onChanged: (val) {
                         _markDirty();
                         setState(() => _publisherId = val);
                       },
-                      validator: (v) => v == null ? 'Выберите издательство' : null,
+                      validator: (v) =>
+                          v == null ? 'Выберите издательство' : null,
                     ),
                     const SizedBox(height: 16),
                     FormField<List<int>>(
                       initialValue: _authorIds,
-                      validator: (val) =>
-                          (val == null || val.isEmpty) ? 'Выберите хотя бы одного автора' : null,
+                      validator: (val) => (val == null || val.isEmpty)
+                          ? 'Выберите хотя бы одного автора'
+                          : null,
                       builder: (field) {
                         return InputDecorator(
                           decoration: InputDecoration(
@@ -330,7 +354,9 @@ class _BookFormScreenState extends State<BookFormScreen> {
                                 onSelected: (isSelected) {
                                   _markDirty();
                                   final next = [...field.value!];
-                                  isSelected ? next.add(a.id) : next.remove(a.id);
+                                  isSelected
+                                      ? next.add(a.id)
+                                      : next.remove(a.id);
                                   field.didChange(next);
                                   setState(() => _authorIds = next);
                                 },
@@ -343,8 +369,9 @@ class _BookFormScreenState extends State<BookFormScreen> {
                     const SizedBox(height: 16),
                     FormField<List<int>>(
                       initialValue: _genreIds,
-                      validator: (val) =>
-                          (val == null || val.isEmpty) ? 'Выберите хотя бы один жанр' : null,
+                      validator: (val) => (val == null || val.isEmpty)
+                          ? 'Выберите хотя бы один жанр'
+                          : null,
                       builder: (field) {
                         return InputDecorator(
                           decoration: InputDecoration(
@@ -363,7 +390,9 @@ class _BookFormScreenState extends State<BookFormScreen> {
                                 onSelected: (isSelected) {
                                   _markDirty();
                                   final next = [...field.value!];
-                                  isSelected ? next.add(g.id) : next.remove(g.id);
+                                  isSelected
+                                      ? next.add(g.id)
+                                      : next.remove(g.id);
                                   field.didChange(next);
                                   setState(() => _genreIds = next);
                                 },
@@ -385,7 +414,10 @@ class _BookFormScreenState extends State<BookFormScreen> {
                               border: OutlineInputBorder(),
                             ),
                             onChanged: (_) => _markDirty(),
-                            validator: V.combine([V.required(), V.integer(min: 0)]),
+                            validator: V.combine([
+                              V.required(),
+                              V.integer(min: 0),
+                            ]),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -398,7 +430,10 @@ class _BookFormScreenState extends State<BookFormScreen> {
                               border: OutlineInputBorder(),
                             ),
                             onChanged: (_) => _markDirty(),
-                            validator: V.combine([V.required(), V.integer(min: 0)]),
+                            validator: V.combine([
+                              V.required(),
+                              V.integer(min: 0),
+                            ]),
                           ),
                         ),
                       ],
@@ -409,10 +444,17 @@ class _BookFormScreenState extends State<BookFormScreen> {
                           ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
                           : const Icon(Icons.save),
-                      label: Text(widget.isEditing ? 'Сохранить изменения' : 'Создать книгу'),
+                      label: Text(
+                        widget.isEditing
+                            ? 'Сохранить изменения'
+                            : 'Создать книгу',
+                      ),
                       onPressed: _isSaving ? null : _submit,
                     ),
                   ],

@@ -42,9 +42,15 @@ class GenreDetailScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(genre.name, style: Theme.of(context).textTheme.headlineSmall),
+                      Text(
+                        genre.name,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
                       const SizedBox(height: 12),
-                      Text(genre.description, style: Theme.of(context).textTheme.bodyLarge),
+                      Text(
+                        genre.description,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
                     ],
                   ),
                 ),

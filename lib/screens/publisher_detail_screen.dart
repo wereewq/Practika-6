@@ -29,7 +29,9 @@ class PublisherDetailScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           final pub = snapshot.data;
-          if (pub == null) return const Center(child: Text('Издательство не найдено'));
+          if (pub == null) {
+            return const Center(child: Text('Издательство не найдено'));
+          }
 
           return Center(
             child: ConstrainedBox(
@@ -42,7 +44,10 @@ class PublisherDetailScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(pub.name, style: Theme.of(context).textTheme.headlineSmall),
+                      Text(
+                        pub.name,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
                       const SizedBox(height: 12),
                       ListTile(
                         leading: const Icon(Icons.location_city),

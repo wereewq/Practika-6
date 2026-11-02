@@ -78,8 +78,14 @@ class _ReaderFormScreenState extends State<ReaderFormScreen> {
         title: const Text('Несохранённые изменения'),
         content: const Text('Данные читателя не сохранены. Выйти?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Остаться')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Выйти')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Остаться'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Выйти'),
+          ),
         ],
       ),
     );
@@ -128,9 +134,9 @@ class _ReaderFormScreenState extends State<ReaderFormScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка сохранения: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Ошибка сохранения: $e')));
     }
   }
 
@@ -160,7 +166,9 @@ class _ReaderFormScreenState extends State<ReaderFormScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.isEditing ? 'Редактирование читателя' : 'Новый читатель'),
+          title: Text(
+            widget.isEditing ? 'Редактирование читателя' : 'Новый читатель',
+          ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () async {
@@ -181,7 +189,10 @@ class _ReaderFormScreenState extends State<ReaderFormScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text('Персональные данные', style: Theme.of(context).textTheme.titleMedium),
+                    Text(
+                      'Персональные данные',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _fullNameController,
@@ -190,7 +201,10 @@ class _ReaderFormScreenState extends State<ReaderFormScreen> {
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (_) => _markDirty(),
-                      validator: V.combine([V.required(), V.length(min: 3, max: 150)]),
+                      validator: V.combine([
+                        V.required(),
+                        V.length(min: 3, max: 150),
+                      ]),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -252,13 +266,18 @@ class _ReaderFormScreenState extends State<ReaderFormScreen> {
                                 border: OutlineInputBorder(),
                               ),
                               onChanged: (_) => _markDirty(),
-                              validator: V.combine([V.required(), V.length(min: 4, max: 30)]),
+                              validator: V.combine([
+                                V.required(),
+                                V.length(min: 4, max: 30),
+                              ]),
                             ),
                             const SizedBox(height: 12),
                             SwitchListTile(
                               title: const Text('Статус билета активен'),
                               subtitle: Text(
-                                _isCardActive ? 'Действителен' : 'Заблокирован / Приостановлен',
+                                _isCardActive
+                                    ? 'Действителен'
+                                    : 'Заблокирован / Приостановлен',
                               ),
                               value: _isCardActive,
                               onChanged: (val) {
@@ -276,10 +295,17 @@ class _ReaderFormScreenState extends State<ReaderFormScreen> {
                           ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
                           : const Icon(Icons.save),
-                      label: Text(widget.isEditing ? 'Сохранить изменения' : 'Зарегистрировать читателя'),
+                      label: Text(
+                        widget.isEditing
+                            ? 'Сохранить изменения'
+                            : 'Зарегистрировать читателя',
+                      ),
                       onPressed: _isSaving ? null : _submit,
                     ),
                   ],

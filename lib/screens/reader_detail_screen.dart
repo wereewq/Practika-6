@@ -35,7 +35,9 @@ class ReaderDetailScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           final reader = snapshot.data;
-          if (reader == null) return const Center(child: Text('Читатель не найден'));
+          if (reader == null) {
+            return const Center(child: Text('Читатель не найден'));
+          }
 
           return Center(
             child: ConstrainedBox(
@@ -48,7 +50,10 @@ class ReaderDetailScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(reader.fullName, style: Theme.of(context).textTheme.headlineSmall),
+                      Text(
+                        reader.fullName,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
                       const SizedBox(height: 12),
                       ListTile(
                         leading: const Icon(Icons.email),
@@ -61,14 +66,21 @@ class ReaderDetailScreen extends StatelessWidget {
                         subtitle: Text(reader.phone),
                       ),
                       const Divider(),
-                      Text('Читательский билет (1-к-1)', style: Theme.of(context).textTheme.titleSmall),
+                      Text(
+                        'Читательский билет (1-к-1)',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
                       ListTile(
                         leading: const Icon(Icons.credit_card),
                         title: const Text('Номер билета'),
                         subtitle: Text(reader.card.cardNumber),
                         trailing: Chip(
-                          label: Text(reader.card.isActive ? 'Активен' : 'Заблокирован'),
-                          backgroundColor: reader.card.isActive ? Colors.green.shade50 : Colors.red.shade50,
+                          label: Text(
+                            reader.card.isActive ? 'Активен' : 'Заблокирован',
+                          ),
+                          backgroundColor: reader.card.isActive
+                              ? Colors.green.shade50
+                              : Colors.red.shade50,
                         ),
                       ),
                     ],

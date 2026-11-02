@@ -38,7 +38,10 @@ class EntityCardList<T> extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
             side: isSelected
-                ? BorderSide(color: Theme.of(context).colorScheme.primary, width: 2)
+                ? BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 2,
+                  )
                 : BorderSide(color: Theme.of(context).dividerColor),
           ),
           child: Padding(
@@ -60,7 +63,9 @@ class EntityCardList<T> extends StatelessWidget {
                 if (subtitleBuilder != null) ...[
                   const SizedBox(height: 4),
                   Padding(
-                    padding: EdgeInsets.only(left: onToggleSelect != null ? 48.0 : 0),
+                    padding: EdgeInsets.only(
+                      left: onToggleSelect != null ? 48.0 : 0,
+                    ),
                     child: subtitleBuilder!(context, item),
                   ),
                 ],
