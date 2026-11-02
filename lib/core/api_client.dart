@@ -4,7 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'api_exceptions.dart';
 import 'config.dart';
 
-Dio buildDio({String? Function()? tokenProvider}) {
+Dio buildDio({
+  String? Function()? tokenProvider,
+  Future<void> Function()? onRefreshToken,
+  VoidCallback? onForceLogout,
+}) {
   final dio = Dio(
     BaseOptions(
       baseUrl: apiBaseUrl,
@@ -19,18 +23,18 @@ Dio buildDio({String? Function()? tokenProvider}) {
     InterceptorsWrapper(
       onRequest: (options, handler) {
         final token = tokenProvider?.call();
-        if (token != null) {
+        if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }
         if (kDebugMode) {
-          debugPrint('--> ${options.method} ${options.uri}');
+          debugPrint('--> ${options.method}${options.uri}');
         }
         return handler.next(options);
       },
       onResponse: (response, handler) {
         final status = response.statusCode ?? 0;
         if (kDebugMode) {
-          debugPrint('<-- $status ${response.requestOptions.uri}');
+          debugPrint('<-- $status${response.requestOptions.uri}');
         }
         if (status >= 400) {
           return handler.reject(
@@ -45,12 +49,26 @@ Dio buildDio({String? Function()? tokenProvider}) {
         return handler.next(response);
       },
       onError: (error, handler) async {
-        if (kDebugMode) {
-          debugPrint('[API Error] ${error.requestOptions.uri}: ${error.type} (${error.message})');
+        final status = error.response?.statusCode;
+        final req = error.requestOptions;
+
+        // Автоматический прозрачный Refresh токена при ошибке 401 (кроме запросов /auth/)
+        if (status == 401 && !req.path.contains('/auth/') && onRefreshToken != null) {
+          try {
+            await onRefreshToken();
+            final newToken = tokenProvider?.call();
+            if (newToken != null) {
+              req.headers['Authorization'] = 'Bearer $newToken';
+              final response = await dio.fetch(req);
+              return handler.resolve(response);
+            }
+          } catch (_) {
+            onForceLogout?.call();
+            return handler.reject(error);
+          }
         }
 
-        // Автоматический повтор (Retry) только для GET-запросов при сбоях связи (до 3 попыток)
-        final req = error.requestOptions;
+        // Retry для GET запросов при сетевых таймаутах
         final isGet = req.method.toUpperCase() == 'GET';
         final isNetwork = error.type == DioExceptionType.connectionError ||
             error.type == DioExceptionType.connectionTimeout;
@@ -59,11 +77,7 @@ Dio buildDio({String? Function()? tokenProvider}) {
         if (isGet && isNetwork && retryCount < 3) {
           retryCount++;
           req.extra['retryCount'] = retryCount;
-          final delayMs = retryCount * 500;
-          if (kDebugMode) {
-            debugPrint('[Retry #$retryCount in ${delayMs}ms] ${req.uri}');
-          }
-          await Future.delayed(Duration(milliseconds: delayMs));
+          await Future.delayed(Duration(milliseconds: retryCount * 500));
           try {
             final response = await dio.fetch(req);
             return handler.resolve(response);
