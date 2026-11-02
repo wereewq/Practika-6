@@ -4,7 +4,9 @@ typedef Validator = String? Function(String?);
 
 class V {
   /// Поле обязательно для заполнения
-  static Validator required([String message = 'Поле обязательно для заполнения']) {
+  static Validator required([
+    String message = 'Поле обязательно для заполнения',
+  ]) {
     return (value) => (value == null || value.trim().isEmpty) ? message : null;
   }
 
@@ -31,7 +33,9 @@ class V {
   }
 
   /// Проверка на положительное число (> 0)
-  static Validator positiveInteger([String message = 'Значение должно быть больше 0']) {
+  static Validator positiveInteger([
+    String message = 'Значение должно быть больше 0',
+  ]) {
     return (value) {
       if (value == null || value.trim().isEmpty) return null;
       final n = int.tryParse(value.trim());
@@ -47,7 +51,9 @@ class V {
   }
 
   /// Формат телефонного номера
-  static Validator phone([String message = 'Укажите телефон в формате +7XXXXXXXXXX']) {
+  static Validator phone([
+    String message = 'Укажите телефон в формате +7XXXXXXXXXX',
+  ]) {
     final re = RegExp(r'^\+?[0-9]{10,15}$');
     return (value) => re.hasMatch(value?.trim() ?? '') ? null : message;
   }
